@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}دخول العميل — CoachPage DZ{% endblock %}
+{% block content %}
+<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;max-width:400px;margin:0 auto;">
+
+  <!-- LOGO -->
+  <div class="fade-up" style="text-align:center;margin-bottom:36px;">
+    <a href="/" style="text-decoration:none;display:inline-block;margin-bottom:18px;">
+      <div style="width:72px;height:72px;background:var(--green-dim);border:2px solid var(--green);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto;" class="glow-ring">
+        <svg width="36" height="36" viewBox="0 0 40 40" fill="none" stroke="var(--green)" stroke-width="2.2" stroke-linecap="round">
+          <rect x="1" y="14" width="6" height="12" rx="2"/>
+          <rect x="33" y="14" width="6" height="12" rx="2"/>
+          <rect x="7" y="10" width="5" height="20" rx="2"/>
+          <rect x="28" y="10" width="5" height="20" rx="2"/>
+          <rect x="12" y="18" width="16" height="4" rx="2"/>
+        </svg>
+      </div>
+    </a>
+    <h1 style="font-size:24px;font-weight:900;color:var(--text);margin:0 0 4px;">دخول العميل</h1>
+    <p style="color:var(--muted);font-size:13px;margin:0;">أدخل الكود اللي عطاك إياه مدربك</p>
+  </div>
+
+  {% for msg in get_flashed_messages(category_filter=["error"]) %}
+  <div style="width:100%;padding:12px 14px;background:var(--red-bg);border:1px solid rgba(248,113,113,0.3);border-radius:10px;margin-bottom:14px;font-size:13px;color:var(--red);font-weight:700;display:flex;align-items:center;gap:8px;" class="fade-up">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    {{ msg }}
+  </div>
+  {% endfor %}
+
+  <!-- OTP BOXES -->
+  <form method="POST" id="otp-form" style="width:100%;" class="fade-up delay-1">
+    <input type="hidden" name="access_code" id="access-code-hidden"/>
+
+    <p style="font-size:12px;font-weight:700;color:var(--muted);text-align:center;letter-spacing:1px;text-transform:uppercase;margin-bottom:18px;">الكود السري (6 أرقام)</p>
+
+    <!-- 6 DIGIT BOXES -->
+    <div style="display:flex;justify-content:center;gap:10px;margin-bottom:28px;" id="otp-boxes">
+      {% for i in range(6) %}
+      <input type="tel"
+             id="otp-{{ i }}"
+             maxlength="1"
+             inputmode="numeric"
+             pattern="[0-9]"
+             autocomplete="{{ 'one-time-code' if i == 0 else 'off' }}"
+             style="width:48px;height:58px;border:1.5px solid var(--border2);border-radius:14px;background:var(--card2);color:var(--text);font-size:26px;font-weight:900;text-align:center;font-family:'Tajawal',monospace;outline:none;transition:all 0.2s;caret-color:var(--green);"
+             onfocus="this.style.borderColor='var(--green)';this.style.boxShadow='0 0 0 3px rgba(34,197,94,0.15)'"
+             onblur="this.style.borderColor='var(--border2)';this.style.boxShadow='none'"
+             oninput="handleOtpInput(this, {{ i }})"
+             onkeydown="handleOtpKey(event, {{ i }})"
+             onpaste="handlePaste(event)"/>
+      {% endfor %}
+    </div>
+
+    <button type="submit" class="btn-primary" id="otp-submit" disabled style="font-size:16px;padding:14px;opacity:0.5;cursor:not-allowed;">
+      <span style="display:flex;align-items:center;justify-content:center;gap:8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        دخول للوحتي
+      </span>
+    </button>
+  </form>
+
+  <!-- HINT -->
+  <div style="width:100%;margin-top:20px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;" class="fade-up delay-2">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;">ما عندكش كود؟</span>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin:0;line-height:1.6;">تواصل مع مدربك على واتساب — هو يعطيك الكود ديالك في ثواني</p>
+  </div>
+
+  <a href="/" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:20px;color:var(--muted);font-size:13px;text-decoration:none;font-weight:600;">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+    رجوع للرئيسية
+  </a>
+</div>
+
+<script>
+const digits = new Array(6).fill('');
+
+function updateHidden() {
+  const code = digits.join('');
+  document.getElementById('access-code-hidden').value = code;
+  const btn = document.getElementById('otp-submit');
+  const full = code.length === 6 && /^\d{6}$/.test(code);
+  btn.disabled = !full;
+  btn.style.opacity = full ? '1' : '0.5';
+  btn.style.cursor = full ? 'pointer' : 'not-allowed';
+  // Update box borders
+  for (let i = 0; i < 6; i++) {
+    const box = document.getElementById('otp-' + i);
+    box.style.borderColor = digits[i] ? 'var(--border2)' : 'var(--border)';
+  }
+}
+
+function handleOtpInput(el, idx) {
+  const val = el.value.replace(/\D/g, '');
+  el.value = val ? val[val.length - 1] : '';
+  digits[idx] = el.value;
+  updateHidden();
+  if (el.value && idx < 5) {
+    document.getElementById('otp-' + (idx + 1)).focus();
+  }
+  if (digits.join('').length === 6 && /^\d{6}$/.test(digits.join(''))) {
+    setTimeout(() => document.getElementById('otp-form').submit(), 300);
+  }
+}
+
+function handleOtpKey(e, idx) {
+  if (e.key === 'Backspace') {
+    if (!digits[idx] && idx > 0) {
+      digits[idx - 1] = '';
+      const prev = document.getElementById('otp-' + (idx - 1));
+      prev.value = '';
+      prev.focus();
+    } else {
+      digits[idx] = '';
+    }
+    updateHidden();
+  } else if (e.key === 'ArrowRight' && idx > 0) {
+    document.getElementById('otp-' + (idx - 1)).focus();
+  } else if (e.key === 'ArrowLeft' && idx < 5) {
+    document.getElementById('otp-' + (idx + 1)).focus();
+  }
+}
+
+function handlePaste(e) {
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+  for (let i = 0; i < 6; i++) {
+    digits[i] = text[i] || '';
+    document.getElementById('otp-' + i).value = digits[i];
+  }
+  updateHidden();
+  const nextEmpty = digits.findIndex(d => !d);
+  const focus = nextEmpty >= 0 ? nextEmpty : 5;
+  document.getElementById('otp-' + focus).focus();
+}
+
+// Auto-focus first box
+document.getElementById('otp-0').focus();
+</script>
+{% endblock %}

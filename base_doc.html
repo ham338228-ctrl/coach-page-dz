@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>{% block title %}CoachPage DZ{% endblock %}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: #f7f7f5;
+      color: #111;
+      min-height: 100vh;
+    }
+    a { color: inherit; }
+    .doc-topbar {
+      background: #fff;
+      border-bottom: 1px solid #e5e5e5;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .doc-logo {
+      font-size: 16px;
+      font-weight: 900;
+      color: #111;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .doc-logo span { color: #22c55e; }
+    .doc-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .badge-admin { background: #111; color: #fff; }
+    .badge-coach { background: #0d2018; color: #22c55e; border: 1px solid #22c55e; }
+    .badge-client { background: #0d2018; color: #22c55e; border: 1px solid #22c55e; }
+    .doc-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+    .doc-hero {
+      padding: 36px 0 28px;
+      border-bottom: 1px solid #e5e5e5;
+      margin-bottom: 32px;
+    }
+    .doc-hero h1 {
+      font-size: 28px;
+      font-weight: 900;
+      color: #111;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .doc-hero p {
+      font-size: 15px;
+      color: #666;
+      line-height: 1.7;
+    }
+    .doc-section {
+      margin-bottom: 40px;
+    }
+    .doc-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #999;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #22c55e;
+      display: inline-block;
+    }
+    .doc-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 12px;
+    }
+    .doc-card-green {
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 12px;
+    }
+    .doc-card-warn {
+      background: #fffbeb;
+      border: 1px solid #fbbf24;
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+    }
+    .doc-card-danger {
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+    }
+    .step-row {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .step-row:last-child { border-bottom: none; }
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .step-num-green { background: #0d2018; color: #22c55e; border: 1.5px solid #22c55e; }
+    .step-num-gray  { background: #f3f3f3; color: #888; border: 1.5px solid #ddd; }
+    .step-num-black { background: #111; color: #fff; }
+    .step-title { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 3px; }
+    .step-desc  { font-size: 13px; color: #666; line-height: 1.6; }
+    .url-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .url-row:last-child { border-bottom: none; }
+    code {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      background: #f3f4f6;
+      padding: 2px 8px;
+      border-radius: 6px;
+      direction: ltr;
+      display: inline-block;
+    }
+    code.green { background: #f0fdf4; color: #16a34a; }
+    code.dark  { background: #111; color: #fff; }
+    .pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 999px;
+    }
+    .pill-green  { background: #f0fdf4; color: #16a34a; border: 1px solid #86efac; }
+    .pill-yellow { background: #fffbeb; color: #b45309; border: 1px solid #fbbf24; }
+    .pill-red    { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+    .pill-gray   { background: #f3f4f6; color: #6b7280; border: 1px solid #d1d5db; }
+    .doc-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: 'Tajawal', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 11px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      width: 100%;
+      transition: opacity 0.15s;
+    }
+    .doc-btn:hover { opacity: 0.85; }
+    .doc-btn-green { background: #22c55e; color: #fff; }
+    .doc-btn-black { background: #111; color: #fff; }
+    .doc-btn-outline { background: transparent; color: #111; border: 1.5px solid #ddd; }
+    .doc-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .feature-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .feature-icon {
+      width: 40px; height: 40px;
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- TOP BAR -->
+  <div class="doc-topbar">
+    <a href="/" class="doc-logo">
+      <svg width="20" height="20" viewBox="0 0 40 40" fill="none" stroke="#22c55e" stroke-width="2.2">
+        <rect x="1" y="14" width="6" height="12" rx="2"/>
+        <rect x="33" y="14" width="6" height="12" rx="2"/>
+        <rect x="7" y="10" width="5" height="20" rx="2"/>
+        <rect x="28" y="10" width="5" height="20" rx="2"/>
+        <rect x="12" y="18" width="16" height="4" rx="2"/>
+      </svg>
+      CoachPage <span>DZ</span>
+    </a>
+    <span class="doc-badge {% block badge_class %}badge-gray{% endblock %}">{% block badge_label %}دليل{% endblock %}</span>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="doc-wrap">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

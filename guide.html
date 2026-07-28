@@ -1,0 +1,196 @@
+{% extends "base_doc.html" %}
+{% block title %}دليل المشرف — CoachPage DZ{% endblock %}
+{% block badge_class %}badge-admin{% endblock %}
+{% block badge_label %}مشرف{% endblock %}
+{% block content %}
+
+<div class="doc-hero">
+  <div style="display:inline-flex;align-items:center;gap:8px;background:#111;border-radius:999px;padding:5px 14px;margin-bottom:14px;">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span style="font-size:12px;font-weight:700;color:#fff;">للمشرف فقط — خاص</span>
+  </div>
+  <h1>دليل إدارة <span style="color:#22c55e;">المنصة</span></h1>
+  <p style="margin-top:10px;">كل ما تحتاجه لإدارة المنصة، المدربين، والإعدادات. هذه الصفحة خاصة بك — لا تشاركها.</p>
+</div>
+
+<!-- ═══ CREDENTIALS ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">بيانات الدخول</span>
+  <div class="doc-card">
+    <div class="url-row">
+      <span style="font-size:13px;color:#444;font-weight:600;">رابط لوحة المشرف</span>
+      <code class="green">/admin</code>
+    </div>
+    <div class="url-row">
+      <span style="font-size:13px;color:#444;font-weight:600;">كلمة السر الحالية</span>
+      <code class="dark">{{ admin_password }}</code>
+    </div>
+    <div class="url-row" style="border-bottom:none;">
+      <span style="font-size:13px;color:#444;font-weight:600;">تغيير كلمة السر</span>
+      <span style="font-size:12px;color:#888;">Replit → Secrets → ADMIN_PASSWORD</span>
+    </div>
+  </div>
+  <div class="doc-card-warn" style="display:flex;gap:10px;align-items:flex-start;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <div style="font-size:13px;color:#92400e;line-height:1.6;">غيّر كلمة السر من إعدادات Replit قبل ما تشارك رابط المنصة. الصفحة الحالية محمية — لا أحد يوصلها إلا بعد تسجيل دخول المشرف.</div>
+  </div>
+</div>
+
+<!-- ═══ FIRST SETUP ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">الإعداد الأول للمنصة</span>
+  <div class="doc-card">
+    {% set setup_steps = [
+      ("ادخل لوحة المشرف", "/admin → أدخل كلمة السر"),
+      ("اضبط CCP ديالك", "الإعدادات → رقم CCP BaridiMob — هذا ما يراه المدربون لدفع الاشتراك"),
+      ("اضبط رقم واتساب ديالك", "الإعدادات → رقم واتساب — المدربون يتواصلون معك عبره لإرسال الوصل"),
+      ("اضبط سعر اشتراك المدربين", "الإعدادات → السعر الشهري للمدرب (دج)"),
+      ("شارك رابط المنصة", "الصفحة الرئيسية / — المدربون يسجّلون من /register"),
+    ] %}
+    {% for title, desc in setup_steps %}
+    <div class="step-row">
+      <div class="step-num step-num-black">{{ loop.index }}</div>
+      <div>
+        <div class="step-title">{{ title }}</div>
+        <div class="step-desc">{{ desc }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ═══ COACH LIFECYCLE ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">دورة حياة المدرب</span>
+  <div class="doc-card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+      <span class="pill pill-yellow">قيد المراجعة</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span class="pill pill-green">مفعّل</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      <span class="pill pill-red">موقّف</span>
+    </div>
+    {% for num, title, desc in [
+      ("1", "مدرب يسجّل", "يملأ بياناته عبر /register — يأخذ حالة 'قيد المراجعة' تلقائياً"),
+      ("2", "يبعث الوصل", "يدفع عبر BaridiMob ويرسلك صورة الوصل على واتساب"),
+      ("3", "تتحقق من الدفع", "افتح تطبيق بريدي موب وتحقق من وصول المبلغ"),
+      ("4", "تضغط تفعيل", "من لوحتك، اضغط زر 'تفعيل' — المدرب يظهر فوراً في الهوم بيج"),
+      ("5", "المتابعة الشهرية", "كل شهر يدفع المدرب الاشتراك — إذا ما دفعش تضغط 'إيقاف'"),
+    ] %}
+    <div class="step-row">
+      <div class="step-num step-num-black">{{ num }}</div>
+      <div>
+        <div class="step-title">{{ title }}</div>
+        <div class="step-desc">{{ desc }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ═══ PLATFORM SETTINGS ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">إعدادات المنصة الحالية</span>
+  <div class="doc-card">
+    <div class="url-row">
+      <span style="font-size:13px;color:#444;">CCP BaridiMob</span>
+      <code>{{ settings.owner_ccp or "غير محدد بعد" }}</code>
+    </div>
+    <div class="url-row">
+      <span style="font-size:13px;color:#444;">واتساب</span>
+      <code>{{ settings.owner_whatsapp or "غير محدد بعد" }}</code>
+    </div>
+    <div class="url-row" style="border-bottom:none;">
+      <span style="font-size:13px;color:#444;">سعر الاشتراك الشهري للمدرب</span>
+      <code class="green">{{ "{:,}".format(settings.coach_monthly_price) }} دج</code>
+    </div>
+  </div>
+  {% if not settings.owner_ccp or not settings.owner_whatsapp %}
+  <div class="doc-card-danger" style="display:flex;gap:10px;align-items:flex-start;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <div style="font-size:13px;color:#dc2626;line-height:1.6;">إعدادات المنصة غير مكتملة. اذهب للوحة المشرف وأكمل الـCCP والواتساب قبل ما تبدأ تقبل مدربين.</div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- ═══ ALL URLS ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">كل روابط المنصة</span>
+  <div class="doc-card">
+    {% set urls = [
+      ("/", "الصفحة الرئيسية — قائمة المدربين النشطين", "green"),
+      ("/register", "تسجيل مدرب جديد", "green"),
+      ("/admin", "لوحة المشرف", "dark"),
+      ("/guide", "هذا الدليل (مشرف فقط)", "dark"),
+      ("/guide/coach", "دليل المدرب (عام)", ""),
+      ("/guide/client", "دليل العميل (عام)", ""),
+      ("/coach/<اسم>", "الصفحة العامة للمدرب", ""),
+      ("/coach/<اسم>/login", "دخول المدرب", ""),
+      ("/coach/<اسم>/dashboard", "لوحة تحكم المدرب", ""),
+      ("/coach/<اسم>/settings", "إعدادات المدرب", ""),
+      ("/client/access", "دخول العميل بالكود", "green"),
+      ("/client/<رقم>/dashboard", "لوحة تحكم العميل", ""),
+    ] %}
+    {% for url, desc, style in urls %}
+    <div class="url-row">
+      <code {% if style %}class="{{ style }}"{% endif %}>{{ url }}</code>
+      <span style="font-size:12px;color:#888;text-align:right;">{{ desc }}</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ═══ ADMIN TOOLS ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">أدوات المشرف</span>
+  <div class="doc-card">
+    {% for title, desc in [
+      ("تفعيل مدرب", "لوحة المشرف → المدربون → تفعيل — المدرب يظهر في الهوم بيج فوراً"),
+      ("إيقاف مدرب", "لوحة المشرف → المدربون → إيقاف — المدرب يختفي من الهوم بيج"),
+      ("ملاحظة داخلية", "لكل مدرب حقل ملاحظات خاص بك — لا يراه المدرب — للتذكيرات والمتابعة"),
+      ("حذف مدرب نهائياً", "يحذف المدرب وكل عملاءه وسجلاتهم — لا يمكن التراجع"),
+      ("إعادة تعيين قاعدة البيانات", "احذف الملف coachpage.db وأعد تشغيل التطبيق — يحذف كل البيانات"),
+    ] %}
+    <div class="step-row">
+      <div style="width:8px;height:8px;background:#22c55e;border-radius:50%;flex-shrink:0;margin-top:8px;"></div>
+      <div>
+        <div class="step-title">{{ title }}</div>
+        <div class="step-desc">{{ desc }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ═══ ENV VARS ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">متغيرات البيئة (Replit Secrets)</span>
+  <div class="doc-card">
+    {% for var, desc, required in [
+      ("ADMIN_PASSWORD", "كلمة سر لوحة المشرف — احفظها في Replit Secrets", True),
+      ("SESSION_SECRET", "مفتاح تشفير الجلسات — غيّره لقيمة عشوائية", True),
+      ("GMAIL_USER", "إيميل المشرف لإرسال روابط استعادة كلمة السر", True),
+      ("GMAIL_APP_PASSWORD", "App Password ديال Gmail — من إعدادات Google", True),
+      ("SESSION_COOKIE_SECURE", "اضبطه على true عند النشر على HTTPS", True),
+      ("CLAUDE_API_KEY", "مفتاح Claude AI لتحليل صور الأكل — اختياري", False),
+    ] %}
+    <div class="url-row">
+      <code class="dark">{{ var }}</code>
+      <span style="font-size:11px;color:#888;text-align:right;flex:1;padding-right:8px;">{{ desc }}</span>
+      {% if required %}
+      <span class="pill pill-red" style="font-size:10px;">مهم</span>
+      {% else %}
+      <span class="pill pill-gray" style="font-size:10px;">اختياري</span>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ═══ CTA ═══ -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+  <a href="/admin/dashboard" class="doc-btn doc-btn-black" style="color:#fff;">لوحة المشرف ←</a>
+  <a href="/" class="doc-btn doc-btn-outline" style="color:#666;">الرئيسية</a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}تسجيل مدرب جديد — CoachPage DZ{% endblock %}
+{% block content %}
+<div style="max-width:480px;margin:0 auto;padding:32px 20px 80px;">
+
+  <!-- HEADER -->
+  <div class="fade-up" style="text-align:center;margin-bottom:28px;">
+    <div style="width:60px;height:60px;background:var(--green-dim);border:2px solid var(--green);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+      </svg>
+    </div>
+    <h1 style="font-size:22px;font-weight:900;color:var(--text);margin:0;">انضم كمدرب</h1>
+    <p style="color:var(--muted);font-size:13px;margin-top:6px;">سجّل حسابك وابدأ تدير عملاءك بالذكاء الاصطناعي</p>
+  </div>
+
+  <!-- WHAT YOU GET -->
+  <div class="fade-up delay-1 card" style="margin-bottom:22px;">
+    <p class="section-label">واش تاخد مع الاشتراك</p>
+    {% for item in ["صفحة عامة احترافية بلينك خاص بيك","لوحة تحكم كاملة للعملاء","حساب تلقائي للماكروز BMR/TDEE","50 وصفة صحية جزائرية","حاسبة سعرات من الصورة","تتبع التقدم والوزن","قائمة تسوق أسبوعية تلقائية"] %}
+    <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);">
+      <div style="width:18px;height:18px;background:var(--green-dim);border:1px solid #86efac;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <span style="font-size:13px;color:var(--text2);">{{ item }}</span>
+    </div>
+    {% endfor %}
+
+    <p class="section-label" style="margin-top:14px;margin-bottom:10px;">اختار باقة الاشتراك</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      <label style="cursor:pointer;">
+        <input type="radio" name="plan_choice" value="monthly" checked style="display:none;" onchange="document.getElementById('plan-price').textContent='{{ "{:,}".format(settings.coach_monthly_price) }} دج/شهر'"/>
+        <div class="plan-option" id="plan-monthly" onclick="selectPlan('monthly','{{ settings.coach_monthly_price }}','monthly')" style="border:2px solid var(--green);border-radius:10px;padding:10px 6px;text-align:center;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">شهري</div>
+          <div style="font-size:15px;font-weight:900;color:var(--green);">{{ "{:,}".format(settings.coach_monthly_price) }}</div>
+          <div style="font-size:10px;color:var(--muted);">دج</div>
+        </div>
+      </label>
+      <label style="cursor:pointer;">
+        <input type="radio" name="plan_choice" value="3months" style="display:none;"/>
+        <div class="plan-option" id="plan-3months" onclick="selectPlan('3months','7900','3 أشهر')" style="border:2px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">3 أشهر</div>
+          <div style="font-size:15px;font-weight:900;color:var(--text);">7,900</div>
+          <div style="font-size:10px;color:var(--muted);">دج</div>
+        </div>
+      </label>
+      <label style="cursor:pointer;">
+        <input type="radio" name="plan_choice" value="5months" style="display:none;"/>
+        <div class="plan-option" id="plan-5months" onclick="selectPlan('5months','16900','5 أشهر')" style="border:2px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">5 أشهر</div>
+          <div style="font-size:15px;font-weight:900;color:var(--text);">16,900</div>
+          <div style="font-size:10px;color:var(--muted);">دج</div>
+        </div>
+      </label>
+    </div>
+    <div id="plan-price" style="margin-top:10px;text-align:center;font-size:18px;font-weight:900;color:var(--text);">{{ "{:,}".format(settings.coach_monthly_price) }} دج/شهر</div>
+  </div>
+  <script>
+  function selectPlan(plan,price,label) {
+    ['monthly','3months','5months'].forEach(p => {
+      document.getElementById('plan-'+p).style.borderColor = p===plan ? 'var(--green)' : 'var(--border)';
+      document.getElementById('plan-'+p).querySelector('div:nth-child(2)').style.color = p===plan ? 'var(--green)' : 'var(--text)';
+    });
+    document.getElementById('plan-price').textContent = price.replace(/\B(?=(\d{3})+(?!\d))/g,',')+' دج / '+label;
+    document.querySelector('input[value="'+plan+'"]').checked = true;
+  }
+  </script>
+
+  <!-- FORM -->
+  <form method="POST" class="fade-up delay-2">
+
+    <div style="margin-bottom:14px;">
+      <label class="lbl">اسم المستخدم (للينك) <span class="required">*</span></label>
+      <input type="text" name="username" class="inp" placeholder="مثال: karim_coach" required
+             pattern="[a-zA-Z0-9_]+" title="حروف إنجليزية وأرقام وشرطة سفلية فقط"
+             style="text-align:left;direction:ltr;"/>
+      <p class="hint">لينكك سيكون: /coach/<strong>اسمك</strong></p>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label class="lbl">الاسم الكامل <span class="required">*</span></label>
+      <input type="text" name="full_name" class="inp" placeholder="مثال: كريم بن عمر" required/>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div>
+        <label class="lbl">رقم الهاتف <span class="required">*</span></label>
+        <input type="tel" name="phone_number" class="inp" placeholder="0550123456" required style="direction:ltr;text-align:left;"/>
+      </div>
+      <div>
+        <label class="lbl">البريد الإلكتروني <span class="required">*</span></label>
+        <input type="email" name="email" class="inp" placeholder="email@mail.com" required style="direction:ltr;text-align:left;"/>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div>
+        <label class="lbl">كلمة السر <span class="required">*</span></label>
+        <input type="password" name="password" class="inp" placeholder="6 أحرف على الأقل" required minlength="6"/>
+      </div>
+      <div>
+        <label class="lbl">سعر الاشتراك للعميل (دج)</label>
+        <input type="number" name="subscription_price" class="inp" value="4000" min="500"/>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label class="lbl">رقم واتساب (بالرمز الدولي) <span class="required">*</span></label>
+      <input type="text" name="whatsapp_number" class="inp" placeholder="213550123456" required style="direction:ltr;text-align:left;"/>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label class="lbl">رقم CCP البريدي (BaridiMob)</label>
+      <input type="text" name="baridimob_ccp" class="inp" placeholder="0012345678 clé 32" style="direction:ltr;text-align:left;"/>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label class="lbl">رقم البطاقة الذهبية (Edahabia) — اختياري</label>
+      <input type="text" name="edahabia_card" class="inp" placeholder="رقم بطاقة Edahabia" style="direction:ltr;text-align:left;"/>
+    </div>
+
+    <div style="margin-bottom:22px;">
+      <label class="lbl">البايو (عرّف بنفسك)</label>
+      <textarea name="bio" class="inp" rows="3" placeholder="خبرتك، تخصصك، وأشخدمت..." style="resize:none;"></textarea>
+    </div>
+
+    <button type="submit" class="btn-primary">إنشاء حسابي ←</button>
+  </form>
+
+  <div style="text-align:center;margin-top:16px;">
+    <a href="/" style="font-size:13px;color:var(--muted);text-decoration:none;">رجوع للرئيسية</a>
+  </div>
+</div>
+{% endblock %}

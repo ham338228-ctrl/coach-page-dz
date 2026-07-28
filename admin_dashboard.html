@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+{% block title %}لوحة المشرف — CoachPage DZ{% endblock %}
+{% block content %}
+<div style="max-width:480px;margin:0 auto;padding:20px 16px 100px;">
+
+  <!-- HEADER -->
+  <div class="fade-up" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="width:36px;height:36px;background:var(--green-dim);border:1px solid var(--border2);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div>
+        <h1 style="font-size:19px;font-weight:900;color:var(--text);margin:0;">لوحة المشرف</h1>
+        <p style="font-size:11px;color:var(--muted);margin:1px 0 0;">CoachPage DZ — تحكم كامل</p>
+      </div>
+    </div>
+    <a href="/admin/logout" style="text-decoration:none;">
+      <button class="btn-ghost" style="padding:9px 14px;font-size:12px;display:flex;align-items:center;gap:6px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        خروج
+      </button>
+    </a>
+  </div>
+
+  <!-- STATS -->
+  <div class="fade-up delay-1" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+    <div class="stat-box">
+      <div class="stat-val green">{{ stats.active }}</div>
+      <div class="stat-lbl">مفعّل</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" style="color:#d97706;">{{ stats.pending }}</div>
+      <div class="stat-lbl">مراجعة</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" style="color:var(--red);">{{ stats.suspended }}</div>
+      <div class="stat-lbl">موقّف</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" style="color:#3b82f6;">{{ stats.total_clients }}</div>
+      <div class="stat-lbl">عملاء</div>
+    </div>
+  </div>
+
+  <!-- REVENUE BANNER -->
+  <div class="fade-up delay-1 card-green" style="margin-bottom:14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <p class="section-label" style="margin:0 0 4px;">الإيراد المتوقع هذا الشهر</p>
+        <div style="font-size:26px;font-weight:900;color:var(--text);">{{ "{:,}".format(stats.revenue_month) }} <span style="font-size:14px;font-weight:400;color:var(--muted);">دج</span></div>
+      </div>
+      <div style="text-align:center;">
+        <p class="section-label" style="margin:0 0 2px;">إجمالي المدربين</p>
+        <div style="font-size:28px;font-weight:900;color:var(--text);">{{ coaches|length }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLATFORM SETTINGS -->
+  <div class="fade-up delay-2 card" style="margin-bottom:14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="toggleSection('settings-form','settings-arrow')">
+      <p class="section-label" style="margin:0;">إعدادات المنصة (CCP ديالك)</p>
+      <div id="settings-arrow" style="transition:transform 0.3s;color:var(--muted);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div id="settings-form" style="margin-top:14px;display:none;">
+      <form method="POST" action="/admin/settings">
+        <div style="margin-bottom:12px;">
+          <label class="lbl">رقم CCP ديالك (المدربين يخلّصوا هنا)</label>
+          <input type="text" name="owner_ccp" class="inp" placeholder="مثال: 0079876543 clé 17"
+                 value="{{ settings.owner_ccp }}" style="direction:ltr;text-align:left;"/>
+          <p class="hint">هذا هو الـCCP اللي سيظهر للمدربين الجدد بعد التسجيل</p>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label class="lbl">رقم واتساب ديالك (يتواصل معك المدربون)</label>
+          <input type="text" name="owner_whatsapp" class="inp" placeholder="213550000000"
+                 value="{{ settings.owner_whatsapp }}" style="direction:ltr;text-align:left;"/>
+        </div>
+        <div style="margin-bottom:14px;">
+          <label class="lbl">سعر الاشتراك الشهري للمدرب (دج)</label>
+          <input type="number" name="coach_monthly_price" class="inp"
+                 value="{{ settings.coach_monthly_price }}" min="0"/>
+        </div>
+        <button type="submit" class="btn-primary">حفظ الإعدادات</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="fade-up delay-2 card" style="margin-bottom:14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="toggleSection('how-form','how-arrow')">
+      <p class="section-label" style="margin:0;">كيف يشتغل النظام</p>
+      <div id="how-arrow" style="transition:transform 0.3s;color:var(--muted);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div id="how-form" style="margin-top:12px;display:none;">
+      {% for step, text in [
+        ("1", "مدرب يسجّل في المنصة عبر /register"),
+        ("2", "يشوف CCP ديالك ويدفع الاشتراك"),
+        ("3", "يبعث لك صورة الوصل على واتساب"),
+        ("4", "أنت تضغط زر التفعيل من تحت"),
+        ("5", "المدرب يدخل لوحة تحكمه ويبدأ يشتغل"),
+      ] %}
+      <div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);align-items:flex-start;">
+        <div style="width:22px;height:22px;background:var(--green-dim);border:1px solid #86efac;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--green2);flex-shrink:0;">{{ step }}</div>
+        <span style="font-size:13px;color:var(--text2);">{{ text }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- COACHES LIST with SEARCH + FILTER -->
+  <div class="fade-up delay-2">
+    <p class="section-label" style="margin-bottom:12px;">قائمة المدربين ({{ coaches|length }})</p>
+
+    <!-- Search -->
+    <div style="position:relative;margin-bottom:10px;">
+      <input type="text" id="coach-search" placeholder="ابحث باسم أو يوزرنيم..." oninput="filterAdminCoaches()"
+             style="width:100%;background:var(--card2);border:1.5px solid var(--border2);border-radius:12px;padding:10px 16px 10px 42px;color:var(--text);font-family:Tajawal,sans-serif;font-size:13px;outline:none;box-sizing:border-box;"
+             onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border2)'"/>
+      <div style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+    </div>
+
+    <!-- Status Filter Tabs -->
+    <div style="display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px;">
+      <button onclick="setAdminFilter('all')" id="af-all" class="filter-pill active-pill">الكل ({{ coaches|length }})</button>
+      <button onclick="setAdminFilter('active')" id="af-active" class="filter-pill">مفعّل ({{ stats.active }})</button>
+      <button onclick="setAdminFilter('pending')" id="af-pending" class="filter-pill">مراجعة ({{ stats.pending }})</button>
+      <button onclick="setAdminFilter('suspended')" id="af-suspended" class="filter-pill">موقّف ({{ stats.suspended }})</button>
+    </div>
+
+    {% if not coaches %}
+    <div class="card" style="text-align:center;padding:36px;color:var(--muted);">لا يوجد مدربون مسجّلون بعد.</div>
+    {% endif %}
+
+    {% for coach in coaches %}
+    <div class="admin-coach-card card" data-name="{{ (coach.full_name or coach.username)|lower }}" data-status="{{ coach.status }}" style="margin-bottom:10px;">
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
+        <div style="width:44px;height:44px;background:var(--green-dim);border:1.5px solid #86efac;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;font-weight:900;color:var(--green);">
+          {{ coach.username[0].upper() }}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">
+            <span style="font-size:15px;font-weight:700;color:var(--text);">{{ coach.full_name or coach.username }}</span>
+            {% if coach.status == "active" %}
+            <span class="badge-green" style="font-size:10px;">مفعّل</span>
+            {% elif coach.status == "pending" %}
+            <span class="badge-yellow" style="font-size:10px;">قيد المراجعة</span>
+            {% else %}
+            <span class="badge-red" style="font-size:10px;">موقّف</span>
+            {% endif %}
+          </div>
+          <div style="font-size:11px;color:var(--muted);font-family:monospace;">@{{ coach.username }}</div>
+          {% if coach.specialty %}
+          <div style="font-size:11px;color:var(--green2);margin-top:1px;">{{ coach.specialty }}</div>
+          {% endif %}
+          <div style="font-size:11px;color:var(--text2);margin-top:2px;">{{ coach.clients|length }} عميل • {{ "{:,}".format(coach.subscription_price) }} دج/شهر</div>
+          {% if coach.phone_number or coach.email %}
+          <div style="font-size:11px;color:var(--muted);margin-top:1px;">{{ coach.phone_number or '' }} {% if coach.email %}| {{ coach.email }}{% endif %}</div>
+          {% endif %}
+          <div style="font-size:11px;color:var(--muted);margin-top:1px;direction:ltr;text-align:right;">{{ coach.baridimob_ccp or "لم يضع CCP" }}</div>
+          {% set cts = coach.trial_status() %}
+          {% if cts == "expired" %}
+          <div style="font-size:11px;color:var(--red);margin-top:4px;font-weight:700;">⏱ الاشتراك منتهي — لوحته موقوفة تلقائياً</div>
+          {% elif cts == "expiring_soon" %}
+          <div style="font-size:11px;color:var(--orange);margin-top:4px;font-weight:700;">⏱ يتبقى {{ coach.trial_days_left() }} يوم على انتهاء الاشتراك</div>
+          {% elif coach.trial_expires_at %}
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">صالح لين {{ coach.trial_expires_at.strftime('%d/%m/%Y') }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- RENEW -->
+      <form method="POST" action="/admin/coach/{{ coach.id }}/renew" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+        <select name="months" class="inp" style="flex:1;min-width:90px;">
+          <option value="1">شهر 1</option>
+          <option value="3">3 أشهر</option>
+          <option value="6">6 أشهر</option>
+          <option value="12">سنة</option>
+        </select>
+        <button type="submit" class="btn-primary" style="flex:1;min-width:100px;font-size:13px;">تجديد الاشتراك</button>
+      </form>
+
+      <!-- ACTIONS -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        {% if coach.status != "active" %}
+        <form method="POST" action="/admin/coach/{{ coach.id }}/status" style="flex:1;">
+          <input type="hidden" name="status" value="active"/>
+          <button type="submit" class="btn-primary" style="font-size:13px;">تفعيل</button>
+        </form>
+        {% endif %}
+        {% if coach.status != "suspended" %}
+        <form method="POST" action="/admin/coach/{{ coach.id }}/status" style="flex:1;">
+          <input type="hidden" name="status" value="suspended"/>
+          <button type="submit" class="btn-danger" style="font-size:13px;">إيقاف</button>
+        </form>
+        {% endif %}
+        {% if coach.status == "suspended" %}
+        <form method="POST" action="/admin/coach/{{ coach.id }}/status" style="flex:1;">
+          <input type="hidden" name="status" value="pending"/>
+          <button type="submit" class="btn-white" style="font-size:13px;">إعادة للمراجعة</button>
+        </form>
+        {% endif %}
+        <a href="/coach/{{ coach.username }}" target="_blank" style="flex:0;text-decoration:none;">
+          <button class="btn-ghost" style="padding:10px 14px;font-size:12px;">↗</button>
+        </a>
+        <a href="/coach/{{ coach.username }}/dashboard" target="_blank" style="flex:0;text-decoration:none;">
+          <button class="btn-ghost" style="padding:10px 10px;font-size:11px;">لوحته</button>
+        </a>
+      </div>
+
+      <!-- DETAILS -->
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);margin-bottom:8px;">
+          <span>تسجيل: {{ coach.registered_at.strftime('%d/%m/%Y') if coach.registered_at else '—' }}</span>
+          <div style="display:flex;gap:8px;">
+            {% if coach.whatsapp_number %}
+            <a href="https://wa.me/{{ coach.whatsapp_number }}" target="_blank" style="color:#25D366;text-decoration:none;font-weight:700;">واتساب ↗</a>
+            {% endif %}
+            <button onclick="copyRefLink('{{ coach.username }}')" style="background:none;border:none;color:var(--green2);font-size:11px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;">نسخ رابط الانضمام</button>
+          </div>
+        </div>
+        <form method="POST" action="/admin/coach/{{ coach.id }}/note" style="margin-bottom:8px;">
+          <div style="display:flex;gap:6px;">
+            <input type="text" name="notes" class="inp" placeholder="ملاحظة داخلية..."
+                   value="{{ coach.admin_notes or '' }}" style="flex:1;font-size:12px;padding:8px 10px;"/>
+            <button type="submit" class="btn-ghost" style="padding:8px 12px;font-size:12px;white-space:nowrap;">حفظ</button>
+          </div>
+        </form>
+        <form method="POST" action="/admin/coach/{{ coach.id }}/delete"
+              onsubmit="return confirm('حذف المدرب @{{ coach.username }} وكل بياناته نهائياً؟')">
+          <button type="submit" style="width:100%;background:transparent;border:1px dashed var(--border2);border-radius:10px;padding:8px;color:var(--muted);font-family:Tajawal,sans-serif;font-size:11px;cursor:pointer;transition:all 0.2s;"
+                  onmouseover="this.style.borderColor='#ef4444';this.style.color='#ef4444';this.style.background='rgba(239,68,68,0.05)'"
+                  onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--muted)';this.style.background='transparent'">
+            حذف هذا المدرب نهائياً
+          </button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+
+    <div id="no-results-admin" style="display:none;text-align:center;padding:28px 20px;" class="card">
+      <p style="font-size:14px;color:var(--muted);margin:0;">ما في نتائج مطابقة</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="/admin/dashboard" class="nav-item active">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    الرئيسية
+  </a>
+  <a href="/register" class="nav-item">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    تسجيل مدرب
+  </a>
+  <a href="/admin/logout" class="nav-item">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    خروج
+  </a>
+</nav>
+
+<style>
+.filter-pill {
+  padding:6px 12px;border-radius:999px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid var(--border2);background:var(--card);color:var(--text2);font-family:Tajawal,sans-serif;white-space:nowrap;transition:all 0.2s;flex-shrink:0;
+}
+.filter-pill:hover { border-color:var(--green);color:var(--green2); }
+.active-pill { background:var(--green) !important;border-color:var(--green) !important;color:#000 !important; }
+</style>
+
+<script>
+function toggleSection(id, arrowId) {
+  const el = document.getElementById(id);
+  const arr = document.getElementById(arrowId);
+  const hidden = el.style.display === 'none';
+  el.style.display = hidden ? 'block' : 'none';
+  arr.style.transform = hidden ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+let adminFilter = 'all';
+function setAdminFilter(f) {
+  adminFilter = f;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active-pill'));
+  const btn = document.getElementById('af-' + f);
+  if (btn) btn.classList.add('active-pill');
+  filterAdminCoaches();
+}
+function filterAdminCoaches() {
+  const q = (document.getElementById('coach-search')?.value || '').trim().toLowerCase();
+  let vis = 0;
+  document.querySelectorAll('.admin-coach-card').forEach(c => {
+    const name = c.dataset.name || '';
+    const status = c.dataset.status || '';
+    const matchQ = !q || name.includes(q);
+    const matchF = adminFilter === 'all' || status === adminFilter;
+    const show = matchQ && matchF;
+    c.style.display = show ? 'block' : 'none';
+    if (show) vis++;
+  });
+  const nr = document.getElementById('no-results-admin');
+  if (nr) nr.style.display = vis === 0 ? 'block' : 'none';
+}
+
+function copyRefLink(username) {
+  const link = window.location.origin + '/join/' + username;
+  navigator.clipboard.writeText(link).catch(() => {});
+  event.target.textContent = 'تم النسخ!';
+  setTimeout(() => event.target.textContent = 'نسخ رابط الانضمام', 1800);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block title %}إعدادات — {{ coach.username }}{% endblock %}
+{% block content %}
+<div style="max-width:480px;margin:0 auto;padding:20px 16px 100px;">
+
+  <!-- HEADER -->
+  <div class="fade-up" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+    <div>
+      <h1 style="font-size:20px;font-weight:900;color:var(--text);margin:0;">الإعدادات</h1>
+      <p style="font-size:12px;color:var(--muted);margin:2px 0 0;">@{{ coach.username }}</p>
+    </div>
+    <a href="/coach/{{ coach.username }}/dashboard" style="text-decoration:none;">
+      <button class="btn-ghost" style="padding:9px 13px;font-size:12px;">← رجوع</button>
+    </a>
+  </div>
+
+  <!-- STATUS BADGE -->
+  {% if coach.status == "pending" %}
+  <div class="fade-up badge-yellow" style="padding:12px 16px;border-radius:12px;margin-bottom:18px;display:flex;align-items:center;gap:10px;font-size:13px;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    حسابك قيد المراجعة — انتظر تفعيل المشرف
+  </div>
+  {% elif coach.status == "suspended" %}
+  <div class="fade-up badge-red" style="padding:12px 16px;border-radius:12px;margin-bottom:18px;display:flex;align-items:center;gap:10px;font-size:13px;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+    حسابك موقّف — تواصل مع المشرف
+  </div>
+  {% else %}
+  <div class="fade-up badge-green" style="padding:12px 16px;border-radius:12px;margin-bottom:18px;display:flex;align-items:center;gap:10px;font-size:13px;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+    حسابك مفعّل ويظهر في الهوم بيج
+  </div>
+  {% endif %}
+
+  <!-- PROFILE FORM -->
+  <div class="fade-up delay-1 card" style="margin-bottom:14px;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+      <div style="width:30px;height:30px;background:var(--green-dim);border:1px solid #86efac;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"/><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"/></svg>
+      </div>
+      <p class="section-label" style="margin:0;">الملف الشخصي</p>
+    </div>
+    <form method="POST" action="/coach/{{ coach.username }}/settings" enctype="multipart/form-data">
+      <input type="hidden" name="action" value="profile"/>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+        <div style="width:64px;height:64px;border-radius:50%;overflow:hidden;background:var(--green-dim);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          {% if coach.photo_url %}
+          <img src="{{ coach.photo_url }}" alt="{{ coach.full_name }}" style="width:100%;height:100%;object-fit:cover;"/>
+          {% else %}
+          <span style="font-size:24px;font-weight:900;color:var(--green2);">{{ (coach.full_name or coach.username)[0] }}</span>
+          {% endif %}
+        </div>
+        <div>
+          <label class="lbl" style="display:block;margin-bottom:6px;">صورة البروفايل</label>
+          <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" class="inp" style="font-size:12px;padding:8px;"/>
+          <p class="hint" style="margin:4px 0 0;">تظهر بجانب اسمك في صفحة المدربين — أقل من 5 ميغا</p>
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label class="lbl">الاسم الكامل</label>
+        <input type="text" name="full_name" class="inp" value="{{ coach.full_name }}" placeholder="اسمك الكامل"/>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label class="lbl">التخصص (يظهر بدل @username في الهوم بيج)</label>
+        <input type="text" name="specialty" class="inp"
+               value="{{ coach.specialty if coach.specialty is defined else '' }}"
+               placeholder="مثال: متخصص التنشيف والتضخيم"/>
+        <p class="hint">يظهر كبادج أخضر تحت اسمك في صفحة المدربين</p>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label class="lbl">البايو (يظهر في صفحتك العامة)</label>
+        <textarea name="bio" class="inp" rows="3" style="resize:none;" placeholder="صف نفسك كمدرب...">{{ coach.bio }}</textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div>
+          <label class="lbl">رقم الهاتف</label>
+          <input type="tel" name="phone_number" class="inp" value="{{ coach.phone_number or '' }}" placeholder="0550123456" style="direction:ltr;text-align:left;"/>
+        </div>
+        <div>
+          <label class="lbl">البريد الإلكتروني</label>
+          <input type="email" name="email" class="inp" value="{{ coach.email or '' }}" placeholder="email@mail.com" style="direction:ltr;text-align:left;"/>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div>
+          <label class="lbl">رقم CCP BaridiMob</label>
+          <input type="text" name="baridimob_ccp" class="inp" value="{{ coach.baridimob_ccp }}" placeholder="0079876543 clé 17" style="direction:ltr;text-align:left;"/>
+        </div>
+        <div>
+          <label class="lbl">رقم واتساب</label>
+          <input type="text" name="whatsapp_number" class="inp" value="{{ coach.whatsapp_number }}" placeholder="213550000000" style="direction:ltr;text-align:left;"/>
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label class="lbl">رقم البطاقة الذهبية Edahabia</label>
+        <input type="text" name="edahabia_card" class="inp" value="{{ coach.edahabia_card or '' }}" placeholder="رقم بطاقة Edahabia (اختياري)" style="direction:ltr;text-align:left;"/>
+        <p class="hint">يظهر في صفحتك العامة كخيار دفع إضافي</p>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label class="lbl">سعر الاشتراك للعميل (دج/شهر)</label>
+        <input type="number" name="subscription_price" class="inp" value="{{ coach.subscription_price }}" min="500" step="100"/>
+      </div>
+      <button type="submit" class="btn-primary">حفظ التغييرات</button>
+    </form>
+  </div>
+
+  <!-- CHANGE PASSWORD -->
+  <div class="fade-up delay-2 card" style="margin-bottom:14px;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+      <div style="width:30px;height:30px;background:var(--green-dim);border:1px solid #86efac;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <p class="section-label" style="margin:0;">تغيير كلمة السر</p>
+    </div>
+    <form method="POST" action="/coach/{{ coach.username }}/settings">
+      <input type="hidden" name="action" value="password"/>
+      {% for field_id, field_name, label_text in [
+        ('pw-cur', 'current_password', 'كلمة السر الحالية'),
+        ('pw-new', 'new_password', 'كلمة السر الجديدة (6+ أحرف)'),
+        ('pw-conf', 'confirm_password', 'تأكيد كلمة السر الجديدة'),
+      ] %}
+      <div style="margin-bottom:12px;position:relative;">
+        <label class="lbl">{{ label_text }}</label>
+        <div style="position:relative;">
+          <input type="password" name="{{ field_name }}" id="{{ field_id }}"
+                 class="inp" placeholder="••••••••"
+                 {% if field_name == 'new_password' %}minlength="6"{% endif %}
+                 style="padding-left:44px;"/>
+          <button type="button" onclick="togglePwField('{{ field_id }}')"
+            style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:4px;color:var(--muted);display:flex;align-items:center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      {% endfor %}
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span style="font-size:11px;color:var(--muted);">اضغط أيقونة العين لإظهار/إخفاء كلمة السر</span>
+      </div>
+      <button type="submit" class="btn-primary" style="display:flex;align-items:center;justify-content:center;gap:8px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        تغيير كلمة السر
+      </button>
+    </form>
+  </div>
+
+  <!-- QUICK LINKS -->
+  <div class="fade-up delay-3 card">
+    <p class="section-label">روابط سريعة</p>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <a href="/coach/{{ coach.username }}" target="_blank" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;">
+        <span style="font-size:13px;color:var(--text2);">صفحتي العامة</span>
+        <span style="font-size:11px;color:var(--green);font-family:monospace;direction:ltr;">/coach/{{ coach.username }} ↗</span>
+      </a>
+      <a href="/coach/{{ coach.username }}/dashboard" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;">
+        <span style="font-size:13px;color:var(--text2);">لوحة التحكم</span>
+        <span style="font-size:11px;color:var(--muted);font-family:monospace;direction:ltr;">/dashboard →</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function togglePwField(id) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+</script>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="/coach/{{ coach.username }}/dashboard" class="nav-item">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    الرئيسية
+  </a>
+  <a href="/coach/{{ coach.username }}/settings" class="nav-item active">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    الإعدادات
+  </a>
+  <a href="/coach/{{ coach.username }}/logout" class="nav-item">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    خروج
+  </a>
+</nav>
+{% endblock %}

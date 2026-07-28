@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}CoachPage DZ — منصة إدارة التدريب الرياضي والتغذية في الجزائر{% endblock %}
+{% block content %}
+
+<!-- HERO -->
+<div style="padding:36px 22px 28px;text-align:center;" class="fade-up">
+  <div style="display:inline-flex;align-items:center;gap:8px;background:var(--gold-dim);border:1px solid rgba(234,179,8,0.25);border-radius:999px;padding:6px 16px;margin-bottom:20px;">
+    <span style="width:6px;height:6px;background:var(--gold);border-radius:50%;"></span>
+    <span style="font-size:12px;color:var(--gold);font-weight:700;">منصة جزائرية مبنية لمدربي اللياقة والتغذية</span>
+  </div>
+  <h1 style="font-size:25px;font-weight:900;color:var(--text);margin:0 0 14px;line-height:1.5;">
+    نظّم عملك كمدرب رياضي<br/>بدل الإكسل والدفاتر
+  </h1>
+  <p style="font-size:14px;color:var(--text2);line-height:1.85;margin:0 auto 26px;max-width:340px;">
+    CoachPage DZ تحسب السعرات والماكروز لعملائك أوتوماتيكيا، تتابع وزنهم وانضباطهم يوميا، وتنظّم اشتراكاتهم — كل شيء من لوحة تحكم وحدة، بواجهة عربية بالكامل.
+  </p>
+  <div style="display:flex;flex-direction:column;gap:10px;max-width:280px;margin:0 auto;">
+    <a href="/register" style="text-decoration:none;"><button class="btn-primary" style="width:100%;">ابدأ تجربتك المجانية — 7 أيام</button></a>
+    <a href="/login" style="text-decoration:none;"><button class="btn-ghost" style="width:100%;">لدي حساب بالفعل</button></a>
+  </div>
+  <div style="margin-top:16px;">
+    <a href="/client/access" style="font-size:12px;color:var(--muted);text-decoration:none;">أنا عميل ومعي كود دخول من مدربي ←</a>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div style="padding:8px 22px 28px;">
+  <p class="section-label" style="text-align:center;margin-bottom:20px;">كيف تعمل المنصة</p>
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <div class="card fade-up" style="display:flex;gap:14px;align-items:flex-start;">
+      <div style="width:34px;height:34px;background:var(--gold-dim);border:1px solid rgba(234,179,8,0.25);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;color:var(--gold);">1</div>
+      <div>
+        <p style="font-size:14px;font-weight:800;color:var(--text);margin:0 0 4px;">أنشئ صفحتك الخاصة</p>
+        <p style="font-size:13px;color:var(--text2);margin:0;line-height:1.7;">سجّل بياناتك ومعلومات الدفع (CCP أو بطاقة الذهبية) وسعر اشتراكك — تحصل فورا على رابط خاص بك تشاركه مع عملائك.</p>
+      </div>
+    </div>
+    <div class="card fade-up delay-1" style="display:flex;gap:14px;align-items:flex-start;">
+      <div style="width:34px;height:34px;background:var(--gold-dim);border:1px solid rgba(234,179,8,0.25);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;color:var(--gold);">2</div>
+      <div>
+        <p style="font-size:14px;font-weight:800;color:var(--text);margin:0 0 4px;">أضف عملاءك بمعلومات بسيطة</p>
+        <p style="font-size:13px;color:var(--text2);margin:0;line-height:1.7;">أدخل الوزن والطول والهدف فقط — المنصة تحسب السعرات والماكروز تلقائيا وتولّد كود دخول خاص لكل عميل.</p>
+      </div>
+    </div>
+    <div class="card fade-up delay-2" style="display:flex;gap:14px;align-items:flex-start;">
+      <div style="width:34px;height:34px;background:var(--gold-dim);border:1px solid rgba(234,179,8,0.25);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:900;color:var(--gold);">3</div>
+      <div>
+        <p style="font-size:14px;font-weight:800;color:var(--text);margin:0 0 4px;">تابع التقدم يوما بيوم</p>
+        <p style="font-size:13px;color:var(--text2);margin:0;line-height:1.7;">عميلك يسجّل وجباته ووزنه من رابطه الخاص، وأنت تراقب كل شيء من لوحة تحكم واحدة — بلا رسائل متفرقة أو دفاتر ورقية.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div style="padding:8px 22px 28px;">
+  <p class="section-label" style="text-align:center;margin-bottom:20px;">ما الذي تحصل عليه</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    {% set features = [
+      ("حساب تلقائي دقيق", "سعرات وماكروز محسوبة علميا حسب الوزن والطول والهدف"),
+      ("متابعة الوزن", "رسم بياني يوضح تطور وزن كل عميل عبر الوقت"),
+      ("خريطة الانضباط", "لون أخضر أو أحمر لكل يوم على مدار 90 يوما"),
+      ("وصفات جزائرية", "مقترحات وجبات صحية بمكونات محلية متوفرة"),
+      ("قائمة تسوق أسبوعية", "تُبنى تلقائيا حسب أهداف كل عميل"),
+      ("تذكير قبل الانتهاء", "تنبيه تلقائي للمدرب قبل انتهاء اشتراك عميله"),
+    ] %}
+    {% for title, desc in features %}
+    <div class="card fade-up" style="padding:16px 14px;">
+      <p style="font-size:13px;font-weight:800;color:var(--green2);margin:0 0 4px;">{{ title }}</p>
+      <p style="font-size:12px;color:var(--text2);margin:0;line-height:1.6;">{{ desc }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- FAQ -->
+<div style="padding:8px 22px 28px;">
+  <p class="section-label" style="text-align:center;margin-bottom:20px;">أسئلة يطرحها المدربون كثيرا</p>
+  <div style="display:flex;flex-direction:column;gap:8px;">
+    {% set faqs = [
+      ("قداش تكلفني المنصة؟", "7 أيام تجربة مجانية بلا كارت بنكي. بعدها اشتراك شهري بسعر ثابت يحدده صاحب المنصة — تدفع عبر CCP أو بطاقة الذهبية، والتفعيل يدوي بعد استلام الدفع."),
+      ("كيفاش نستلم فلوس عملائي؟", "أنت من يحدد سعر اشتراكك مع كل عميل، والدفع يوصلك مباشرة فحسابك (CCP أو الذهبية) بلا وسيط من المنصة."),
+      ("واش بياناتي وبيانات عملائي آمنة؟", "نعم، البيانات محفوظة فقاعدة بيانات مشفّرة، وكل عميل يدخل بكود خاص بيه فقط، وأنت الوحيد اللي يشوف بيانات عملائك."),
+      ("كيفاش عميلي يدخل لصفحته؟", "كل عميل تضيفه يحصل أوتوماتيكيا على كود دخول من 6 أرقام، تشاركه معه (واتساب مثلا)، ويدخل بيه مباشرة بلا تسجيل معقد."),
+      ("واش نقدر نلغي فأي وقت؟", "نعم، ما كاين أي التزام طويل المدى — الاشتراك شهري وتقدر توقفه أو ما تجدّدوش وقتما تحب."),
+      ("واش تخدم من الهاتف؟", "نعم، المنصة مبنية أساسا لتخدم بسلاسة من الهاتف، وتخدم عادي من الكمبيوتر أيضا."),
+    ] %}
+    {% for q, a in faqs %}
+    <details class="card fade-up" style="padding:0;cursor:pointer;">
+      <summary style="padding:14px 16px;font-size:13px;font-weight:700;color:var(--text);list-style:none;display:flex;justify-content:space-between;align-items:center;">
+        {{ q }}
+        <span style="color:var(--muted);font-size:16px;">+</span>
+      </summary>
+      <p style="padding:0 16px 14px;font-size:13px;color:var(--text2);margin:0;line-height:1.7;">{{ a }}</p>
+    </details>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- FINAL CTA -->
+<div style="padding:8px 22px 40px;">
+  <div class="card fade-up" style="text-align:center;padding:28px 20px;background:var(--green-dim);border-color:var(--border2);">
+    <p style="font-size:15px;font-weight:800;color:var(--text);margin:0 0 6px;">جاهز تنظّم خدمتك كمدرب؟</p>
+    <p style="font-size:13px;color:var(--text2);margin:0 0 18px;">7 أيام تجربة مجانية، بلا كارت بنكي.</p>
+    <a href="/register" style="text-decoration:none;"><button class="btn-primary" style="width:100%;">سجّل الآن</button></a>
+  </div>
+  <div style="text-align:center;margin-top:24px;">
+    <a href="/admin" style="font-size:11px;color:var(--muted);text-decoration:none;">دخول المشرف</a>
+  </div>
+</div>
+
+<!-- CHATBOT WIDGET -->
+<div id="cb-bubble" onclick="cbToggle()" style="position:fixed;bottom:20px;left:20px;width:54px;height:54px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(34,197,94,0.4);z-index:999;">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#08150a" stroke-width="2.2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+</div>
+<div id="cb-panel" style="display:none;position:fixed;bottom:84px;left:20px;width:min(320px,88vw);max-height:440px;background:var(--card);border:1px solid var(--border2);border-radius:16px;box-shadow:var(--shadow-lg);z-index:999;flex-direction:column;overflow:hidden;">
+  <div style="padding:14px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-size:13px;font-weight:800;color:var(--text);">مساعد CoachPage DZ</span>
+    <span onclick="cbToggle()" style="cursor:pointer;color:var(--muted);font-size:18px;">×</span>
+  </div>
+  <div id="cb-messages" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:180px;max-height:280px;">
+    <div style="background:var(--green-dim);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--text2);align-self:flex-start;max-width:85%;">أهلا! اسألني أي حاجة على المنصة — الأسعار، طريقة الدفع، أو كيفاش تخدم.</div>
+  </div>
+  <div style="padding:10px;border-top:1px solid var(--border);display:flex;gap:8px;">
+    <input id="cb-input" type="text" placeholder="اكتب سؤالك..." class="inp" style="flex:1;font-size:13px;padding:10px 12px;"
+           onkeydown="if(event.key==='Enter'){cbSend();}"/>
+    <button onclick="cbSend()" class="btn-primary" style="padding:0 16px;font-size:13px;">إرسال</button>
+  </div>
+</div>
+
+<script>
+function cbToggle() {
+  const p = document.getElementById('cb-panel');
+  p.style.display = (p.style.display === 'none' || !p.style.display) ? 'flex' : 'none';
+}
+async function cbSend() {
+  const input = document.getElementById('cb-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  const box = document.getElementById('cb-messages');
+  box.insertAdjacentHTML('beforeend', `<div style="background:var(--bg2);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--text);align-self:flex-end;max-width:85%;">${msg}</div>`);
+  input.value = '';
+  box.scrollTop = box.scrollHeight;
+  const loadingId = 'cb-loading-' + Date.now();
+  box.insertAdjacentHTML('beforeend', `<div id="${loadingId}" style="font-size:12px;color:var(--muted);align-self:flex-start;">يكتب...</div>`);
+  box.scrollTop = box.scrollHeight;
+  try {
+    const res = await fetch('/dz/chatbot-ask', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({message: msg})
+    });
+    const data = await res.json();
+    document.getElementById(loadingId).remove();
+    box.insertAdjacentHTML('beforeend', `<div style="background:var(--green-dim);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--text2);align-self:flex-start;max-width:85%;">${data.reply}</div>`);
+  } catch(e) {
+    document.getElementById(loadingId).remove();
+    box.insertAdjacentHTML('beforeend', `<div style="font-size:12px;color:var(--red);align-self:flex-start;">صرا خطأ فالاتصال.</div>`);
+  }
+  box.scrollTop = box.scrollHeight;
+}
+</script>
+
+{% endblock %}

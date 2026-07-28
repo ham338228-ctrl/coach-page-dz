@@ -1,0 +1,198 @@
+{% extends "base_doc.html" %}
+{% block title %}دليل العميل — CoachPage DZ{% endblock %}
+{% block badge_class %}badge-client{% endblock %}
+{% block badge_label %}دليل العميل{% endblock %}
+{% block content %}
+
+<div class="doc-hero">
+  <div style="display:inline-flex;align-items:center;gap:8px;background:#f0fdf4;border:1px solid #86efac;border-radius:999px;padding:5px 14px;margin-bottom:14px;">
+    <div style="width:8px;height:8px;background:#22c55e;border-radius:50%;"></div>
+    <span style="font-size:12px;font-weight:700;color:#16a34a;">للعملاء فقط</span>
+  </div>
+  <h1>كيفاش تستعمل لوحتك اليومية</h1>
+  <p style="margin-top:10px;">دليل سريع يشرح لك كل قسم في لوحة تحكمك — من تسجيل الوجبات والماء لمتابعة الوزن والوصفات.</p>
+</div>
+
+<!-- ═══ HOW TO ACCESS ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">كيف تدخل للوحتك — 3 طرق</span>
+  <div class="doc-card">
+
+    <!-- METHOD 1: REFERRAL LINK -->
+    <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:12px;padding:12px 14px;margin-bottom:12px;">
+      <div style="font-size:13px;font-weight:800;color:#166534;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        الأسهل — رابط الانضمام الخاص بمدربك
+      </div>
+      <div style="font-size:12px;color:#166534;line-height:1.6;">مدربك يبعثلك رابط من نوع <code style="background:#dcfce7;padding:1px 6px;border-radius:4px;">coachpagedz.com/join/اسم-مدربك</code> — افتح الرابط وأدخل كودك مباشرة. صفحة مدربك تظهر لك مع معلوماته.</div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-num step-num-black">2</div>
+      <div>
+        <div class="step-title">رابط الدخول العام</div>
+        <div class="step-desc">افتح <code class="green">/client/access</code> — أدخل الكود في 6 خانات منفصلة. يتقدم تلقائياً بين الخانات.</div>
+      </div>
+    </div>
+    <div class="step-row" style="border-bottom:none;">
+      <div class="step-num step-num-green">3</div>
+      <div>
+        <div class="step-title">لصق الكود مباشرة</div>
+        <div class="step-desc">إذا عندك الكود كنص، اضغط Ctrl+V في أي خانة — تتملأ الكل تلقائياً وتدخل في ثواني.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD EXPLAINED ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">شرح كل قسم في لوحتك</span>
+
+  <!-- STATS -->
+  <div class="doc-card" style="margin-bottom:12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div class="feature-icon" style="flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <div style="font-size:15px;font-weight:800;color:#111;">إحصاءاتك السريعة</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
+      <div style="background:#f7f7f5;border-radius:10px;padding:12px;text-align:center;">
+        <div style="font-size:20px;font-weight:900;color:#22c55e;">N</div>
+        <div style="font-size:11px;color:#888;margin-top:2px;">أيام متتالية</div>
+      </div>
+      <div style="background:#f7f7f5;border-radius:10px;padding:12px;text-align:center;">
+        <div style="font-size:20px;font-weight:900;color:#111;">N%</div>
+        <div style="font-size:11px;color:#888;margin-top:2px;">نسبة الالتزام</div>
+      </div>
+      <div style="background:#f7f7f5;border-radius:10px;padding:12px;text-align:center;">
+        <div style="font-size:20px;font-weight:900;color:#111;">N</div>
+        <div style="font-size:11px;color:#888;margin-top:2px;">يوم أخضر</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#888;margin:0;line-height:1.6;">
+      <strong style="color:#22c55e;">الأيام المتتالية</strong> = أيام متتالية حققت فيها هدفك.<br/>
+      <strong style="color:#111;">نسبة الالتزام</strong> = نسبة الأيام الخضراء من إجمالي الأيام المسجّلة.
+    </p>
+  </div>
+
+  <!-- MACROS -->
+  <div class="doc-card" style="margin-bottom:12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div class="feature-icon" style="flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8"><circle cx="12" cy="12" r="10"/></svg></div>
+      <div style="font-size:15px;font-weight:800;color:#111;">الهدف اليومي (الحلقات)</div>
+    </div>
+    <p style="font-size:13px;color:#555;line-height:1.7;">
+      الحلقة الكبيرة = السعرات الحرارية. الأشرطة = البروتين، الكارب، الدهون.<br/>
+      <strong style="color:#22c55e;">اليوم أخضر</strong> لما تكون السعرات والبروتين في ±10% من هدفك.<br/>
+      <strong style="color:#dc2626;">اليوم أحمر</strong> لما تخرج من النطاق.
+    </p>
+  </div>
+
+  <!-- LOG MEALS -->
+  <div class="doc-card-green" style="margin-bottom:12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div style="width:36px;height:36px;background:#22c55e;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div style="font-size:15px;font-weight:800;color:#111;">تسجيل وجبات اليوم — أهم شيء</div>
+    </div>
+    <div class="step-row" style="padding:8px 0;"><div class="step-num step-num-green" style="width:22px;height:22px;font-size:11px;">1</div><div class="step-desc">احسب السعرات والماكروز اللي كلتها — تطبيق مثل MyFitnessPal يساعدك</div></div>
+    <div class="step-row" style="padding:8px 0;"><div class="step-num step-num-green" style="width:22px;height:22px;font-size:11px;">2</div><div class="step-desc">أدخل الأرقام: السعرات، البروتين، الكارب، الدهون، والماء</div></div>
+    <div class="step-row" style="padding:8px 0;border-bottom:none;"><div class="step-num step-num-green" style="width:22px;height:22px;font-size:11px;">3</div><div class="step-desc">اضغط "تسجيل وجباتي" — اليوم يتلوّن أخضر أو أحمر تلقائياً</div></div>
+    <div style="background:#dcfce7;border-radius:8px;padding:10px;margin-top:10px;font-size:12px;color:#166534;">
+      سجّل وجباتك كل يوم — تقدر تعدّل التسجيل أكثر من مرة في نفس اليوم
+    </div>
+  </div>
+
+  <!-- WATER TRACKER -->
+  <div class="doc-card" style="margin-bottom:12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div class="feature-icon" style="flex-shrink:0;background:#eff6ff;border-color:#bfdbfe;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.8"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+      </div>
+      <div style="font-size:15px;font-weight:800;color:#111;">متابعة شرب الماء</div>
+    </div>
+    <p style="font-size:13px;color:#555;line-height:1.7;margin-bottom:10px;">
+      في خانة الماء عند التسجيل اليومي، الأزرار السريعة <strong style="color:#3b82f6;">+250</strong> و<strong style="color:#3b82f6;">+500</strong> تجمع على الرقم الحالي.<br/>
+      شريط أزرق يبيّن تقدمك نحو هدف الـ<strong>2 لتر</strong> يومياً.
+    </p>
+    <div style="background:#eff6ff;border-radius:8px;padding:10px;font-size:12px;color:#1d4ed8;">
+      الهدف: 2000 مل (2 لتر) في اليوم — 8 أكواس تقريباً
+    </div>
+  </div>
+
+  <!-- PHOTO CALORIE -->
+  <div class="doc-card" style="margin-bottom:12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div class="feature-icon" style="flex-shrink:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </div>
+      <div style="font-size:15px;font-weight:800;color:#111;">حاسبة سعرات من صورة الوجبة</div>
+    </div>
+    <div class="step-row" style="padding:8px 0;"><div class="step-num step-num-green" style="width:22px;height:22px;font-size:11px;">1</div><div class="step-desc">صوّر طبقك أو ارفع صورة — اضغط على المنطقة المنقطة أو اسحب الصورة</div></div>
+    <div class="step-row" style="padding:8px 0;"><div class="step-num step-num-green" style="width:22px;height:22px;font-size:11px;">2</div><div class="step-desc">الذكاء الاصطناعي يحلل ويعطيك السعرات + الماكروز في ثواني</div></div>
+    <div class="step-row" style="padding:8px 0;border-bottom:none;"><div class="step-num step-num-green" style="width:22px;height:22px;font-size:11px;">3</div><div class="step-desc">اضغط "نقل للسجل اليومي" — تتملأ الخانات تلقائياً</div></div>
+  </div>
+
+  <!-- WEIGHT -->
+  <div class="doc-card" style="margin-bottom:12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div class="feature-icon" style="flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div>
+      <div style="font-size:15px;font-weight:800;color:#111;">تسجيل الوزن والمخطط</div>
+    </div>
+    <p style="font-size:13px;color:#555;line-height:1.7;">سجّل وزنك مرة في الأسبوع الصباح قبل الأكل. المخطط يبيّن: الوزن الأول / الحالي / الفرق الكلي.</p>
+  </div>
+
+  <!-- HEATMAP -->
+  <div class="doc-card" style="margin-bottom:12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div class="feature-icon" style="flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>
+      <div style="font-size:15px;font-weight:800;color:#111;">خريطة الالتزام (الهيتماب)</div>
+    </div>
+    <p style="font-size:13px;color:#555;line-height:1.7;">
+      90 مربع = 90 يوم.
+      <span style="display:inline-block;width:12px;height:12px;background:#22c55e;border-radius:2px;vertical-align:middle;"></span> أخضر = هدف محقق.
+      <span style="display:inline-block;width:12px;height:12px;background:#fca5a5;border-radius:2px;vertical-align:middle;"></span> أحمر = لم يُحقق.
+      <span style="display:inline-block;width:12px;height:12px;background:#e5e5e5;border-radius:2px;vertical-align:middle;"></span> رمادي = لم يُسجَّل.
+    </p>
+  </div>
+
+  <!-- AI RECIPE -->
+  <div class="doc-card" style="margin-bottom:12px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div class="feature-icon" style="flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8"><path d="M12 2a7 7 0 1 0 0 14A7 7 0 0 0 12 2z"/></svg></div>
+      <div style="font-size:15px;font-weight:800;color:#111;">مولّد الوصفات بالذكاء الاصطناعي</div>
+    </div>
+    <p style="font-size:13px;color:#555;line-height:1.7;">
+      أدخل المكونات الموجودة في بيتك (دجاج، بيض، شوفان...) من خانة الكتابة أو الأزرار السريعة.<br/>
+      تتولّد وصفة رياضية جزائرية بالدارجة مع حساب الماكروز الكامل.
+    </p>
+  </div>
+</div>
+
+<!-- ═══ TIPS ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">نصائح للنجاح</span>
+  <div class="doc-card">
+    {% for tip in [
+      "احفظ رابط الانضمام ديالك في المفضلة (أو صورة شاشة) — أسرع من البحث كل مرة",
+      "سجّل وجباتك كل يوم حتى لو ما كنتش في الهدف — الاتساق أهم من الكمال",
+      "استخدم حاسبة الصورة إذا ما عرفتش ماكروز وجبة",
+      "اشرب الماء تدريجياً واستخدم الأزرار السريعة +250 كل كوب",
+      "زن نفسك مرة في الأسبوع الصباح بعد الاستيقاظ قبل الأكل",
+      "إذا نسيت كودك تواصل مع مدربك على واتساب — يبعثه لك في ثواني",
+    ] %}
+    <div style="display:flex;gap:10px;padding:9px 0;{% if not loop.last %}border-bottom:1px solid #f0f0f0;{% endif %}align-items:flex-start;">
+      <div style="width:20px;height:20px;background:#f0fdf4;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <span style="font-size:13px;color:#555;line-height:1.6;">{{ tip }}</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ═══ CTA ═══ -->
+<a href="/client/access" class="doc-btn doc-btn-green" style="color:#fff;margin-bottom:8px;display:flex;">ادخل للوحتك ←</a>
+<a href="/" class="doc-btn doc-btn-outline" style="color:#666;display:flex;">الصفحة الرئيسية</a>
+
+{% endblock %}

@@ -1,0 +1,803 @@
+{% extends "base.html" %}
+{% block title %}لوحة تحكم — {{ client.full_name }}{% endblock %}
+{% block content %}
+<div style="max-width:480px;margin:0 auto;padding:20px 16px 100px;">
+
+  <!-- HEADER -->
+  <div class="fade-up" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+    <div>
+      <h1 style="font-size:19px;font-weight:900;color:var(--text);margin:0;">{{ client.full_name }}</h1>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap;">
+        <span class="badge-green" style="font-size:11px;">{{ client.fitness_goal }}</span>
+        <span style="font-size:12px;color:var(--muted);">{{ activity_label }}</span>
+        <span style="font-size:12px;color:var(--muted);">{{ client.weight }}كغ</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;">
+      {% if is_coach_view %}
+      <a href="/coach/{{ coach.username }}/dashboard" style="text-decoration:none;">
+        <button class="btn-ghost" style="padding:9px 13px;font-size:11px;">← رجوع</button>
+      </a>
+      {% else %}
+      <a href="/guide/client" style="text-decoration:none;" title="دليل الاستخدام">
+        <button class="btn-ghost" style="padding:9px 11px;font-size:13px;line-height:1;">?</button>
+      </a>
+      <a href="/client/{{ client.id }}/logout" style="text-decoration:none;">
+        <button class="btn-ghost" style="padding:9px 13px;font-size:11px;">خروج</button>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- SUBSCRIPTION EXPIRY BANNER -->
+  {% if client.subscription_expires_at %}
+  {% set exp = client.subscription_expires_at %}
+  {% if not client.subscription_active %}
+  <div class="fade-up" style="margin-bottom:12px;background:#1a0a0a;border:1px solid #dc2626;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span style="font-size:12px;color:#fca5a5;">اشتراكك موقوف — تواصل مع مدربك لتجديده</span>
+  </div>
+  {% else %}
+  {% set remaining = (exp - today_date).days %}
+  {% if remaining <= 7 %}
+  <div class="fade-up" style="margin-bottom:12px;background:#1a1000;border:1px solid #d97706;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <span style="font-size:12px;color:#fcd34d;">اشتراكك ينتهي بعد {{ remaining }} يوم ({{ exp.strftime('%d/%m/%Y') }}) — تواصل مع مدربك للتجديد</span>
+  </div>
+  {% endif %}
+  {% endif %}
+  {% endif %}
+
+  <!-- COACH NOTES (if any) -->
+  {% if client.coach_notes %}
+  <div class="fade-up card-green" style="margin-bottom:14px;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green2)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span style="font-size:11px;font-weight:700;color:var(--green2);text-transform:uppercase;letter-spacing:1px;">ملاحظة من المدرب</span>
+    </div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.7;margin:0;">{{ client.coach_notes }}</p>
+  </div>
+  {% endif %}
+
+  <!-- ACCESS CODE (coach view) -->
+  {% if is_coach_view %}
+  <div class="fade-up card" style="margin-bottom:14px;background:var(--card2);">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <div>
+        <p class="section-label" style="margin:0 0 6px;">كود دخول العميل</p>
+        <div style="font-size:30px;font-weight:900;color:var(--green);letter-spacing:8px;font-family:monospace;direction:ltr;">{{ client.access_code }}</div>
+        <p class="hint" style="margin-top:4px;">أرسل هذا الكود للعميل — يستخدمه على /client/access</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <form method="POST" action="/coach/{{ coach.username }}/client/{{ client.id }}/reset-code">
+          <button type="submit" class="btn-ghost" style="font-size:11px;padding:8px 12px;white-space:nowrap;">تجديد الكود</button>
+        </form>
+        <form method="POST" action="/coach/{{ coach.username }}/client/{{ client.id }}/delete" onsubmit="return confirm('حذف {{ client.full_name }} نهائياً؟')">
+          <button type="submit" class="btn-danger" style="font-size:11px;padding:8px 12px;white-space:nowrap;">حذف العميل</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- CLIENT STATS -->
+  <div class="fade-up delay-1" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+    <div class="stat-box">
+      <div class="stat-val green">{{ client_stats.streak }}</div>
+      <div class="stat-lbl">أيام متتالية</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">{{ client_stats.adherence_pct }}%</div>
+      <div class="stat-lbl">نسبة الالتزام</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val">{{ client_stats.green_days }}</div>
+      <div class="stat-lbl">يوم أخضر</div>
+    </div>
+  </div>
+
+  <!-- MACRO RINGS -->
+  <div class="fade-up delay-1 card" style="margin-bottom:14px;" id="log-section">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <p class="section-label" style="margin:0;">الهدف اليومي</p>
+      <div style="font-size:11px;">
+        {% if today_log %}
+          <span style="color:{{ 'var(--green2)' if today_log.adherence_score == 'green' else 'var(--red)' }};font-weight:700;">
+            {{ 'هدف محقق' if today_log.adherence_score == 'green' else 'هدف غير محقق' }}
+          </span>
+        {% else %}
+          <span style="color:var(--muted);">لم يُسجَّل بعد</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Big Calories Ring -->
+    <div style="display:flex;justify-content:center;margin-bottom:18px;">
+      <div class="ring-container" style="width:120px;height:120px;">
+        {% set cal_consumed = today_log.calories_consumed if today_log else 0 %}
+        {% set cal_pct = [(cal_consumed / client.calories_target * 100)|int, 100]|min if client.calories_target > 0 else 0 %}
+        <svg width="120" height="120" viewBox="0 0 120 120" style="transform:rotate(-90deg)">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="var(--bg2)" stroke-width="8"/>
+          <circle cx="60" cy="60" r="50" fill="none"
+            stroke="{{ 'var(--green)' if today_log and today_log.adherence_score == 'green' else 'var(--text)' }}"
+            stroke-width="8" stroke-linecap="round"
+            stroke-dasharray="{{ (cal_pct / 100 * 314.16)|round(1) }} 314.16"/>
+        </svg>
+        <div class="ring-label">
+          <div style="font-size:22px;font-weight:900;color:var(--text);">{{ cal_consumed }}</div>
+          <div style="font-size:10px;color:var(--muted);">/ {{ client.calories_target }}</div>
+          <div style="font-size:10px;color:var(--muted);">سعرة</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Macro Bars -->
+    {% for name, consumed, target, color in [
+      ("البروتين",      today_log.protein_consumed|int if today_log else 0, client.protein_target, "#3b82f6"),
+      ("الكربوهيدرات", today_log.carbs_consumed|int if today_log else 0,   client.carbs_target,  "#f59e0b"),
+      ("الدهون",        today_log.fats_consumed|int if today_log else 0,    client.fats_target,   "#8b5cf6"),
+    ] %}
+    {% set pct = [(consumed / target * 100)|int, 100]|min if target > 0 else 0 %}
+    <div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+        <span style="font-size:12px;color:var(--text2);">{{ name }}</span>
+        <span style="font-size:12px;font-weight:700;color:var(--text);">{{ consumed }}غ / {{ target }}غ</span>
+      </div>
+      <div style="height:6px;background:var(--bg2);border-radius:9999px;overflow:hidden;">
+        <div class="macro-bar-fill" style="width:{{ pct }}%;background:{{ color }};"></div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- BMR / TDEE -->
+  <div class="fade-up delay-1" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+    <div class="card" style="text-align:center;padding:14px;">
+      <div class="section-label" style="margin-bottom:4px;">BMR</div>
+      <div style="font-size:22px;font-weight:900;color:var(--text);">{{ bmr }}</div>
+      <div style="font-size:10px;color:var(--muted);">سعرة/يوم</div>
+    </div>
+    <div class="card" style="text-align:center;padding:14px;">
+      <div class="section-label" style="margin-bottom:4px;">TDEE</div>
+      <div style="font-size:22px;font-weight:900;color:var(--text);">{{ tdee }}</div>
+      <div style="font-size:10px;color:var(--muted);">سعرة/يوم</div>
+    </div>
+  </div>
+
+  <!-- LOG DAILY INTAKE -->
+  <div class="fade-up delay-2 card" style="margin-bottom:14px;">
+    <p class="section-label">تسجيل وجبات اليوم</p>
+    <form method="POST" action="/client/{{ client.id }}/log">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div>
+          <label class="lbl">السعرات</label>
+          <input type="number" name="calories_consumed" class="inp"
+                 placeholder="{{ client.calories_target }}"
+                 value="{{ today_log.calories_consumed if today_log else '' }}" id="inp-cal"/>
+        </div>
+        <div>
+          <label class="lbl">البروتين (غ)</label>
+          <input type="number" name="protein_consumed" class="inp" step="0.1"
+                 placeholder="{{ client.protein_target }}"
+                 value="{{ today_log.protein_consumed|int if today_log else '' }}" id="inp-prot"/>
+        </div>
+        <div>
+          <label class="lbl">الكربوهيدرات (غ)</label>
+          <input type="number" name="carbs_consumed" class="inp" step="0.1"
+                 placeholder="{{ client.carbs_target }}"
+                 value="{{ today_log.carbs_consumed|int if today_log else '' }}" id="inp-carbs"/>
+        </div>
+        <div>
+          <label class="lbl">الدهون (غ)</label>
+          <input type="number" name="fats_consumed" class="inp" step="0.1"
+                 placeholder="{{ client.fats_target }}"
+                 value="{{ today_log.fats_consumed|int if today_log else '' }}" id="inp-fats"/>
+        </div>
+        <div style="grid-column:1/-1;">
+          <label class="lbl" style="display:flex;align-items:center;gap:6px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+            الماء (مل)
+          </label>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <input type="number" name="water_ml" class="inp" step="100" min="0" max="6000"
+                   placeholder="2000"
+                   value="{{ today_log.water_ml if today_log else '' }}" style="flex:1;"/>
+            <div style="display:flex;gap:4px;">
+              {% for ml in [250, 500] %}
+              <button type="button" onclick="addWater({{ ml }})"
+                style="background:var(--bg2);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:8px 10px;font-size:11px;cursor:pointer;font-family:'Tajawal',sans-serif;font-weight:700;white-space:nowrap;">
+                +{{ ml }}
+              </button>
+              {% endfor %}
+            </div>
+          </div>
+          {% if today_log and today_log.water_ml %}
+          <div style="margin-top:6px;">
+            {% set water_pct = [(today_log.water_ml / 2000 * 100)|int, 100]|min %}
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+              <span style="font-size:11px;color:var(--muted);">التقدم نحو 2L</span>
+              <span style="font-size:11px;font-weight:700;color:#38bdf8;">{{ today_log.water_ml }}مل</span>
+            </div>
+            <div style="height:5px;background:var(--bg2);border-radius:9999px;overflow:hidden;">
+              <div style="height:100%;width:{{ water_pct }}%;background:#38bdf8;border-radius:9999px;transition:width 1s;"></div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      <button type="submit" class="btn-primary">
+        {{ 'تحديث التسجيل' if today_log else 'تسجيل وجباتي' }}
+      </button>
+    </form>
+  </div>
+
+  <!-- PHOTO CALORIE ANALYZER -->
+  <div class="fade-up delay-2 card" style="margin-bottom:14px;" id="photo-section">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <div style="width:28px;height:28px;background:var(--green-dim);border:1px solid #86efac;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+      </div>
+      <p class="section-label" style="margin:0;">حاسبة سعرات من صورة الوجبة</p>
+    </div>
+    <p class="hint" style="margin-bottom:12px;">صوّر طبقك وتحليل فوري بالذكاء الاصطناعي</p>
+
+    <div id="photo-drop-zone" style="border:1.5px dashed var(--border2);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:border-color 0.2s;"
+         onclick="document.getElementById('photo-file').click()"
+         ondragover="event.preventDefault();this.style.borderColor='var(--green)'"
+         ondragleave="this.style.borderColor='var(--border2)'"
+         ondrop="handlePhotoDrop(event)">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" style="margin:0 auto 8px;display:block;">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+      <p style="font-size:13px;color:var(--muted);margin:0;" id="photo-label">اضغط أو اسحب صورة الوجبة</p>
+    </div>
+    <input type="file" id="photo-file" accept="image/*" capture="environment" style="display:none;" onchange="analyzePhoto(this)"/>
+
+    <div id="photo-result" style="display:none;margin-top:14px;"></div>
+  </div>
+
+  <!-- WEIGHT TRACKING + CHART -->
+  <div class="fade-up delay-2 card" style="margin-bottom:14px;" id="weight-section">
+    <p class="section-label">تطور الوزن</p>
+
+    <form method="POST" action="/client/{{ client.id }}/weight" style="display:flex;gap:8px;margin-bottom:14px;">
+      <input type="hidden" name="redirect_to" value="{{ request.path }}"/>
+      <input type="number" name="weight" class="inp" step="0.1" placeholder="وزنك اليوم (كغ)" style="flex:1;" min="30" max="250"/>
+      <button type="submit" class="btn-primary" style="width:auto;padding:0 16px;white-space:nowrap;font-size:13px;">سجّل</button>
+    </form>
+
+    {% if client.weight_logs %}
+    {% set wlogs = client.weight_logs %}
+    {% set first_w = wlogs[0].weight %}
+    {% set last_w = wlogs[-1].weight %}
+    {% set diff = last_w - first_w %}
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:var(--bg2);border-radius:10px;padding:10px;text-align:center;">
+        <div style="font-size:16px;font-weight:900;color:var(--muted);">{{ first_w }}</div>
+        <div style="font-size:10px;color:var(--muted);">البداية</div>
+      </div>
+      <div style="background:var(--bg2);border-radius:10px;padding:10px;text-align:center;">
+        <div style="font-size:16px;font-weight:900;color:var(--text);">{{ last_w }}</div>
+        <div style="font-size:10px;color:var(--muted);">الآن (كغ)</div>
+      </div>
+      <div style="background:var(--bg2);border-radius:10px;padding:10px;text-align:center;">
+        {% set diff_sign = '+' if diff > 0 else '' %}
+        <div style="font-size:16px;font-weight:900;color:var(--green);">{{ diff_sign }}{{ diff|round(1) }}</div>
+        <div style="font-size:10px;color:var(--muted);">التغيير</div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div style="position:relative;height:160px;">
+      <canvas id="weightChart"></canvas>
+      <div id="chart-empty" style="display:none;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+        <p style="font-size:13px;color:var(--muted);">سجّل وزنك لتشوف التقدم</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEATMAP -->
+  <div class="fade-up delay-2 card" style="margin-bottom:14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <p class="section-label" style="margin:0;">خريطة الالتزام (90 يوم)</p>
+      <div style="display:flex;gap:8px;font-size:10px;color:var(--muted);">
+        <div style="display:flex;align-items:center;gap:3px;"><div class="heatmap-day green" style="width:8px;height:8px;"></div>ناجح</div>
+        <div style="display:flex;align-items:center;gap:3px;"><div class="heatmap-day red" style="width:8px;height:8px;"></div>غاب</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:3px;direction:ltr;">
+      {% for day in heatmap %}
+      <div class="heatmap-day {{ day.status }}" title="{{ day.date }}"></div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- RECIPE BROWSER -->
+  <div class="fade-up delay-3 card" style="margin-bottom:14px;" id="recipe-section">
+    <p class="section-label">كتاب الوصفات الصحية (50 وصفة)</p>
+    <input type="text" id="recipe-search" class="inp" placeholder="ابحث عن وصفة..." style="margin-bottom:10px;" oninput="filterRecipes()"/>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;" id="cat-pills">
+      {% for cat in [("الكل",""), ("فطور","فطور"), ("عصائر","عصائر"), ("سناكات","سناك"), ("وجبات","وجبة"), ("حلويات","حلويات")] %}
+      <button class="filter-pill {{ 'active-pill' if loop.first }}" data-cat="{{ cat[1] }}" onclick="setCat('{{ cat[1] }}',this)">{{ cat[0] }}</button>
+      {% endfor %}
+    </div>
+    <div id="recipe-count" style="font-size:11px;color:var(--muted);margin-bottom:8px;"></div>
+    <div id="recipe-list" style="display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto;"></div>
+    <div id="recipe-detail" style="display:none;margin-top:12px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div id="rd-title" style="font-size:16px;font-weight:800;color:var(--text);"></div>
+        <button onclick="closeRecipeDetail()" class="btn-ghost" style="padding:6px 10px;font-size:12px;">✕</button>
+      </div>
+      <div id="rd-macros" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;"></div>
+      <p class="section-label" style="margin-bottom:4px;">المكوّنات</p>
+      <div id="rd-ingredients" style="font-size:12px;color:var(--text2);background:var(--card);border-radius:8px;padding:10px;margin-bottom:8px;line-height:1.8;"></div>
+      <p class="section-label" style="margin-bottom:4px;">طريقة التحضير</p>
+      <div id="rd-instructions" style="font-size:12px;color:var(--text2);background:var(--card);border-radius:8px;padding:10px;line-height:1.8;"></div>
+    </div>
+  </div>
+
+  <!-- CLIENT SELF-FILL (client view only) -->
+  {% if not is_coach_view %}
+  <div class="fade-up delay-3 card" style="margin-bottom:14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="toggleSection('self-fill-form','self-fill-arrow')">
+      <p class="section-label" style="margin:0;">تحديث بياناتي</p>
+      <div id="self-fill-arrow" style="transition:transform 0.3s;color:var(--muted);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div id="self-fill-form" style="display:none;margin-top:14px;">
+      <form method="POST" action="/client/{{ client.id }}/update-self">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div><label class="lbl">الوزن (كغ)</label><input type="number" name="weight" class="inp" step="0.1" value="{{ client.weight }}"/></div>
+          <div><label class="lbl">الطول (سم)</label><input type="number" name="height" class="inp" value="{{ client.height }}"/></div>
+          <div><label class="lbl">العمر</label><input type="number" name="age" class="inp" value="{{ client.age }}"/></div>
+          <div>
+            <label class="lbl">مستوى النشاط</label>
+            <select name="activity_level" class="inp">
+              {% for v,l in [("sedentary","بلا نشاط"),("light","خفيف"),("moderate","متوسط"),("active","كبير"),("very_active","شديد")] %}
+              <option value="{{ v }}" {{ 'selected' if client.activity_level == v }}>{{ l }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="lbl">الهدف</label>
+            <select name="fitness_goal" class="inp">
+              {% for goal in ["تنشيف","تضخيم","خسارة وزن سريعة","زيادة وزن","الحفاظ على الوزن","لياقة عامة","رياضة تنافسية"] %}
+              <option value="{{ goal }}" {{ 'selected' if client.fitness_goal == goal }}>{{ goal }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div><label class="lbl">رقم الهاتف</label><input type="tel" name="phone_number" class="inp" value="{{ client.phone_number or '' }}" style="direction:ltr;"/></div>
+        </div>
+        <button type="submit" class="btn-primary">حفظ البيانات</button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- SHOPPING LIST -->
+  <div class="fade-up delay-3 card" style="margin-bottom:14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <p class="section-label" style="margin:0;">قائمة التسوق الأسبوعية</p>
+      <button onclick="toggleShopList()" class="btn-ghost" style="font-size:12px;padding:7px 10px;">عرض</button>
+    </div>
+    <div id="shopping-list" style="display:none;">
+      <pre style="font-family:Tajawal,sans-serif;font-size:12px;color:var(--text2);white-space:pre-wrap;line-height:1.8;margin:0;direction:rtl;">{{ shopping_list }}</pre>
+    </div>
+    <button onclick="copyShoppingList()" id="copy-btn" class="btn-ghost" style="width:100%;margin-top:10px;font-size:13px;">نسخ القائمة</button>
+  </div>
+
+  <!-- EDIT CLIENT (coach view only) -->
+  {% if is_coach_view %}
+  <div class="fade-up delay-3 card" style="margin-bottom:14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0;cursor:pointer;" onclick="toggleSection('edit-form','edit-arrow')">
+      <p class="section-label" style="margin:0;">تعديل بيانات العميل</p>
+      <div id="edit-arrow" style="transition:transform 0.3s;color:var(--muted);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div id="edit-form" style="display:none;margin-top:14px;">
+      <form method="POST" action="/coach/{{ coach.username }}/update-client/{{ client.id }}">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div>
+            <label class="lbl">الوزن (كغ)</label>
+            <input type="number" name="weight" class="inp" step="0.1" value="{{ client.weight }}"/>
+          </div>
+          <div>
+            <label class="lbl">الطول (سم)</label>
+            <input type="number" name="height" class="inp" value="{{ client.height }}"/>
+          </div>
+          <div>
+            <label class="lbl">العمر</label>
+            <input type="number" name="age" class="inp" value="{{ client.age }}"/>
+          </div>
+          <div>
+            <label class="lbl">النشاط</label>
+            <select name="activity_level" class="inp">
+              {% for v,l in [("sedentary","بلا نشاط"),("light","خفيف"),("moderate","متوسط"),("active","كبير"),("very_active","شديد")] %}
+              <option value="{{ v }}" {{ 'selected' if client.activity_level == v }}>{{ l }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="lbl">الهدف</label>
+            <select name="fitness_goal" class="inp">
+              {% for goal in ["تنشيف","تضخيم","خسارة وزن سريعة","زيادة وزن","الحفاظ على الوزن","لياقة عامة","رياضة تنافسية"] %}
+              <option value="{{ goal }}" {{ 'selected' if client.fitness_goal == goal }}>{{ goal }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding-top:18px;">
+            <input type="checkbox" name="active_status" id="act" {{ 'checked' if client.active_status }} style="width:16px;height:16px;accent-color:var(--green);"/>
+            <label for="act" style="font-size:13px;color:var(--text2);">نشط</label>
+          </div>
+        </div>
+        <p class="hint" style="margin-bottom:8px;">تجاوز الماكروز (اتركه فارغ للحساب التلقائي)</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+          <div><label class="lbl">سعرات</label><input type="number" name="calories_override" class="inp" placeholder="{{ client.calories_target }}"/></div>
+          <div><label class="lbl">بروتين (غ)</label><input type="number" name="protein_override" class="inp" placeholder="{{ client.protein_target }}"/></div>
+          <div><label class="lbl">كارب (غ)</label><input type="number" name="carbs_override" class="inp" placeholder="{{ client.carbs_target }}"/></div>
+          <div><label class="lbl">دهون (غ)</label><input type="number" name="fats_override" class="inp" placeholder="{{ client.fats_target }}"/></div>
+        </div>
+        <button type="submit" class="btn-primary">حفظ التعديلات</button>
+      </form>
+
+      <!-- Coach Notes -->
+      <div style="margin-top:14px;">
+        <div class="divider"></div>
+        <p class="section-label" style="margin-bottom:8px;">ملاحظة للعميل (تظهر في لوحته)</p>
+        <form method="POST" action="/coach/{{ coach.username }}/client/{{ client.id }}/notes">
+          <textarea name="coach_notes" class="inp" rows="3" style="resize:none;margin-bottom:10px;" placeholder="نصيحة، ملاحظة، أو تعليمات خاصة بهذا العميل...">{{ client.coach_notes or '' }}</textarea>
+          <button type="submit" class="btn-white">حفظ الملاحظة</button>
+        </form>
+      </div>
+
+      <!-- Subscription Management -->
+      <div style="margin-top:14px;">
+        <div class="divider"></div>
+        <p class="section-label" style="margin-bottom:8px;">إدارة الاشتراك</p>
+        {% if client.subscription_expires_at %}
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">
+          ينتهي: {{ client.subscription_expires_at.strftime('%d/%m/%Y') }}
+          {% if client.subscription_active %}
+          <span class="badge-green" style="margin-right:6px;font-size:10px;">نشط</span>
+          {% else %}
+          <span style="background:#1a0a0a;color:#f87171;font-size:10px;padding:2px 8px;border-radius:20px;border:1px solid #dc2626;margin-right:6px;">موقوف</span>
+          {% endif %}
+        </div>
+        {% endif %}
+        <form method="POST" action="/coach/{{ coach.username }}/client/{{ client.id }}/toggle-subscription" style="display:flex;gap:8px;flex-wrap:wrap;">
+          <select name="months" class="inp" style="flex:1;min-width:100px;">
+            <option value="1">1 شهر — {{ "{:,}".format(4200) }} دج</option>
+            <option value="3">3 أشهر — 7,900 دج</option>
+            <option value="5">5 أشهر — 16,900 دج</option>
+          </select>
+          <button type="submit" name="action" value="activate" class="btn-primary" style="flex:1;min-width:100px;font-size:13px;">تفعيل / تجديد</button>
+          <button type="submit" name="action" value="deactivate" class="btn-ghost" style="flex:1;min-width:80px;font-size:13px;color:#f87171;border-color:#f87171;">إيقاف</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  {% if is_coach_view %}
+  <a href="/coach/{{ coach.username }}/dashboard" class="nav-item">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    لوحة التحكم
+  </a>
+  {% endif %}
+  <a href="#log-section" class="nav-item active" onclick="document.getElementById('log-section').scrollIntoView({behavior:'smooth'});return false;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    التسجيل
+  </a>
+  <a href="#photo-section" class="nav-item" onclick="document.getElementById('photo-section').scrollIntoView({behavior:'smooth'});return false;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    صورة
+  </a>
+  <a href="#weight-section" class="nav-item" onclick="document.getElementById('weight-section').scrollIntoView({behavior:'smooth'});return false;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    الوزن
+  </a>
+  <a href="#recipe-section" class="nav-item" onclick="document.getElementById('recipe-section').scrollIntoView({behavior:'smooth'});return false;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    وصفات
+  </a>
+</nav>
+
+<style>
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const clientId = {{ client.id }};
+let weightChart = null;
+
+async function loadWeightChart() {
+  try {
+    const res = await fetch(`/dz/weight-history/${clientId}`);
+    const data = await res.json();
+    const canvas = document.getElementById('weightChart');
+    const emptyEl = document.getElementById('chart-empty');
+    if (!data || data.length === 0) {
+      canvas.style.display = 'none';
+      emptyEl.style.display = 'flex';
+      return;
+    }
+    const labels = data.map(d => { const dt = new Date(d.date); return `${dt.getDate()}/${dt.getMonth()+1}`; });
+    const weights = data.map(d => d.weight);
+    if (weightChart) weightChart.destroy();
+    weightChart = new Chart(canvas, {
+      type: 'line',
+      data: { labels, datasets: [{
+        data: weights,
+        borderColor: '#22c55e',
+        backgroundColor: 'rgba(34,197,94,0.07)',
+        borderWidth: 2.5,
+        pointRadius: data.length <= 8 ? 5 : 2,
+        pointBackgroundColor: '#22c55e',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        fill: true,
+        tension: 0.4,
+      }]},
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#fff',
+            borderColor: '#d1e8d4', borderWidth: 1,
+            titleColor: '#7a9a7e',
+            bodyColor: '#1a2e1a',
+            padding: 10,
+            callbacks: { label: ctx => `${ctx.parsed.y} كغ` }
+          }
+        },
+        scales: {
+          x: { grid: { color: '#eef7f0' }, ticks: { color: '#7a9a7e', font: { size: 10 }, maxTicksLimit: 6 } },
+          y: { grid: { color: '#eef7f0' }, ticks: { color: '#7a9a7e', font: { size: 10 }, callback: v => `${v}كغ` },
+               suggestedMin: Math.min(...weights) - 1, suggestedMax: Math.max(...weights) + 1 }
+        }
+      }
+    });
+  } catch(e) {}
+}
+
+// ── PHOTO CALORIE ANALYZER ───────────────────────────
+function handlePhotoDrop(e) {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) analyzePhotoFile(file);
+}
+
+function analyzePhoto(input) {
+  if (input.files[0]) analyzePhotoFile(input.files[0]);
+}
+
+function analyzePhotoFile(file) {
+  const label = document.getElementById('photo-label');
+  const result = document.getElementById('photo-result');
+  const zone = document.getElementById('photo-drop-zone');
+
+  label.textContent = 'جارٍ التحليل…';
+  zone.style.borderColor = 'var(--green)';
+  result.style.display = 'none';
+  result.innerHTML = '';
+
+  const preview = URL.createObjectURL(file);
+  const fd = new FormData();
+  fd.append('photo', file);
+
+  const loadingHtml = `
+    <div style="text-align:center;padding:16px;">
+      <div style="width:28px;height:28px;border:2px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 8px;"></div>
+      <p style="font-size:12px;color:var(--muted);margin:0;">الذكاء الاصطناعي يحلّل الوجبة…</p>
+    </div>`;
+  result.innerHTML = loadingHtml;
+  result.style.display = 'block';
+
+  fetch('/dz/analyze-food-photo', { method: 'POST', body: fd })
+    .then(r => r.json())
+    .then(d => {
+      zone.style.borderColor = 'var(--border2)';
+      if (d.error) {
+        result.innerHTML = `<div style="background:var(--red-bg);border:1px solid #fca5a5;border-radius:12px;padding:14px;font-size:13px;color:var(--red);">${d.error}</div>`;
+        label.textContent = 'اضغط أو اسحب صورة الوجبة';
+        return;
+      }
+      const total = d.total || {};
+      const foods = d.foods || [];
+      const isMock = d.mock ? '<span style="background:var(--yellow-bg);color:#92400e;border:1px solid #fcd34d;border-radius:4px;padding:2px 6px;font-size:10px;">تقديري</span>' : '';
+      result.innerHTML = `
+        <div style="background:var(--green-dim);border:1px solid #86efac;border-radius:14px;padding:16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-size:13px;font-weight:700;color:var(--green2);">نتيجة التحليل</span>
+            ${isMock}
+          </div>
+          ${d.description ? `<p style="font-size:12px;color:var(--text2);margin-bottom:12px;">${d.description}</p>` : ''}
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px;">
+            ${[['سعرات', total.calories || 0, 'kcal', 'var(--text)'],
+               ['بروتين', total.protein || 0, 'غ', '#3b82f6'],
+               ['كارب', total.carbs || 0, 'غ', '#f59e0b'],
+               ['دهون', total.fats || 0, 'غ', '#8b5cf6']].map(([n,v,u,c]) => `
+            <div style="background:#fff;border-radius:8px;padding:8px;text-align:center;border:1px solid var(--border);">
+              <div style="font-size:15px;font-weight:900;color:${c};">${v}</div>
+              <div style="font-size:9px;color:var(--muted);">${u}<br/>${n}</div>
+            </div>`).join('')}
+          </div>
+          ${foods.length ? `
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;">تفاصيل الأطعمة</div>
+          ${foods.map(f => `
+            <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px;">
+              <span style="color:var(--text2);">${f.name} — ${f.amount}</span>
+              <span style="color:var(--text);font-weight:700;">${f.calories} kcal</span>
+            </div>`).join('')}` : ''}
+          <button onclick="fillLogFromPhoto(${total.calories||0},${total.protein||0},${total.carbs||0},${total.fats||0})"
+                  class="btn-primary" style="margin-top:12px;font-size:13px;">
+            نقل للسجل اليومي
+          </button>
+        </div>`;
+      label.textContent = 'تحليل وجبة أخرى';
+    })
+    .catch(() => {
+      result.innerHTML = `<div class="card" style="background:var(--red-bg);border-color:#fca5a5;font-size:13px;color:var(--red);">حدث خطأ في الاتصال، حاول مرة أخرى.</div>`;
+      label.textContent = 'اضغط أو اسحب صورة الوجبة';
+      zone.style.borderColor = 'var(--border2)';
+    });
+}
+
+function fillLogFromPhoto(cal, prot, carbs, fats) {
+  document.getElementById('inp-cal').value = cal;
+  document.getElementById('inp-prot').value = prot;
+  document.getElementById('inp-carbs').value = carbs;
+  document.getElementById('inp-fats').value = fats;
+  document.getElementById('log-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── RECIPE BROWSER ─────────────────────────────────────
+let allRecipes = [];
+let activeCat = '';
+
+async function loadRecipes() {
+  try {
+    const res = await fetch('/dz/recipes');
+    allRecipes = await res.json();
+    renderRecipeList(allRecipes);
+  } catch(e) {}
+}
+
+function setCat(cat, btn) {
+  activeCat = cat;
+  document.querySelectorAll('.filter-pill').forEach(b => {
+    b.classList.toggle('active-pill', b === btn);
+    b.style.background = b === btn ? 'var(--green)' : 'var(--bg2)';
+    b.style.color = b === btn ? '#000' : 'var(--text2)';
+    b.style.borderColor = b === btn ? 'var(--green)' : 'var(--border)';
+  });
+  filterRecipes();
+}
+
+function filterRecipes() {
+  const q = (document.getElementById('recipe-search')?.value || '').trim();
+  let results = allRecipes;
+  if (activeCat) results = results.filter(r => r.category === activeCat);
+  if (q) results = results.filter(r => r.name.includes(q) || (r.tags||[]).some(t => t.includes(q)));
+  renderRecipeList(results);
+}
+
+function renderRecipeList(list) {
+  const el = document.getElementById('recipe-list');
+  const cnt = document.getElementById('recipe-count');
+  if (!el) return;
+  cnt.textContent = `${list.length} وصفة`;
+  if (!list.length) { el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">ما كاينش وصفة بهاد البحث</div>'; return; }
+  el.innerHTML = list.map((r,i) => `
+    <div onclick="showRecipe(${i},${JSON.stringify(list).indexOf(JSON.stringify(r))})" style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;">${r.name}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:10px;color:var(--muted);">🔥 ${r.calories} kcal</span>
+          <span style="font-size:10px;color:#3b82f6;">بروتين ${r.protein}غ</span>
+          <span style="font-size:10px;color:var(--muted);">${r.category}</span>
+        </div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>`).join('');
+  window._filteredRecipes = list;
+}
+
+function showRecipe(idx) {
+  const r = (window._filteredRecipes || allRecipes)[idx];
+  if (!r) return;
+  document.getElementById('rd-title').textContent = r.name;
+  document.getElementById('rd-macros').innerHTML = [
+    ['سعرات', r.calories, 'kcal', 'var(--text)'],
+    ['بروتين', r.protein, 'غ', '#3b82f6'],
+    ['كارب', r.carbs, 'غ', '#f59e0b'],
+    ['دهون', r.fat, 'غ', '#8b5cf6']
+  ].map(([n,v,u,c]) => `<div style="background:var(--card);border-radius:8px;padding:8px;text-align:center;"><div style="font-size:14px;font-weight:900;color:${c};">${v}</div><div style="font-size:9px;color:var(--muted);">${u} ${n}</div></div>`).join('');
+  document.getElementById('rd-ingredients').innerHTML = (r.ingredients||[]).map(i => `• ${i}`).join('<br>');
+  document.getElementById('rd-instructions').innerHTML = (r.steps||[]).map((s,i) => `<div style="padding:4px 0;border-bottom:1px solid var(--border);">${i+1}. ${s}</div>`).join('');
+  document.getElementById('recipe-detail').style.display = 'block';
+  document.getElementById('recipe-detail').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeRecipeDetail() {
+  document.getElementById('recipe-detail').style.display = 'none';
+}
+
+// ── WATER INTAKE ───────────────────────────────────────
+function addWater(ml) {
+  const inp = document.querySelector('input[name="water_ml"]');
+  if (inp) {
+    const current = parseInt(inp.value) || 0;
+    inp.value = Math.min(current + ml, 6000);
+  }
+}
+
+// ── SHOPPING LIST ──────────────────────────────────────
+function toggleShopList() {
+  const el = document.getElementById('shopping-list');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function copyShoppingList() {
+  const text = document.querySelector('#shopping-list pre')?.textContent || '';
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'تم النسخ!';
+    setTimeout(() => btn.textContent = 'نسخ القائمة', 2000);
+  });
+}
+
+// ── TOGGLE SECTIONS ────────────────────────────────────
+function toggleSection(id, arrowId) {
+  const el = document.getElementById(id);
+  const arr = document.getElementById(arrowId);
+  const hidden = el.style.display === 'none';
+  el.style.display = hidden ? 'block' : 'none';
+  arr.style.transform = hidden ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadWeightChart();
+  loadRecipes();
+  document.querySelectorAll('.filter-pill').forEach((b, idx) => {
+    b.style.background = idx === 0 ? 'var(--green)' : 'var(--bg2)';
+    b.style.color = idx === 0 ? '#000' : 'var(--text2)';
+    b.style.borderColor = idx === 0 ? 'var(--green)' : 'var(--border)';
+  });
+});
+</script>
+
+<style>
+.filter-pill {
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--bg2);
+  color: var(--text2);
+}
+.active-pill {
+  background: var(--green) !important;
+  color: #000 !important;
+  border-color: var(--green) !important;
+}
+</style>
+{% endblock %}

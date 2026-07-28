@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}انضم لبرنامج {{ coach.full_name or coach.username }} — CoachPage DZ{% endblock %}
+{% block content %}
+<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;max-width:400px;margin:0 auto;">
+
+  <!-- COACH CARD -->
+  <div class="fade-up" style="width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:22px 20px;margin-bottom:24px;text-align:center;">
+    <div style="width:64px;height:64px;background:var(--green-dim);border:2px solid var(--green);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:28px;font-weight:900;color:var(--green);" class="glow-ring">
+      {{ (coach.full_name or coach.username)[0] }}
+    </div>
+    <div style="font-size:20px;font-weight:900;color:var(--text);margin-bottom:4px;">{{ coach.full_name or coach.username }}</div>
+    <div style="display:inline-flex;align-items:center;gap:6px;background:var(--green-dim);border:1px solid rgba(34,197,94,0.3);border-radius:999px;padding:3px 12px;margin-bottom:10px;">
+      <div style="width:6px;height:6px;background:var(--green);border-radius:50%;"></div>
+      <span style="font-size:11px;font-weight:700;color:var(--green2);">{{ coach.specialty or 'مدرب رياضي معتمد' }}</span>
+    </div>
+    {% if coach.bio %}
+    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin:0 0 12px;">{{ coach.bio[:120] }}{% if coach.bio|length > 120 %}…{% endif %}</p>
+    {% endif %}
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;font-size:14px;font-weight:900;color:var(--text);">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      {{ "{:,}".format(coach.subscription_price) }} دج/شهر
+    </div>
+  </div>
+
+  <!-- INVITE BANNER -->
+  <div class="fade-up delay-1" style="width:100%;background:var(--green-dim);border:1px solid rgba(34,197,94,0.25);border-radius:14px;padding:14px 18px;margin-bottom:22px;display:flex;align-items:center;gap:12px;">
+    <div style="width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:800;color:var(--green2);margin-bottom:2px;">دعوة شخصية من مدربك</div>
+      <div style="font-size:11px;color:var(--text2);">أدخل الكود اللي أرسله لك مدربك للدخول للوحتك الشخصية</div>
+    </div>
+  </div>
+
+  <!-- FLASH -->
+  {% for msg in get_flashed_messages(category_filter=["error"]) %}
+  <div style="width:100%;padding:12px 14px;background:var(--red-bg);border:1px solid rgba(248,113,113,0.3);border-radius:10px;margin-bottom:14px;font-size:13px;color:var(--red);font-weight:700;display:flex;align-items:center;gap:8px;" class="fade-up">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    {{ msg }}
+  </div>
+  {% endfor %}
+
+  <!-- OTP FORM -->
+  <form method="POST" action="/join/{{ coach.username }}/enter" id="otp-form" style="width:100%;" class="fade-up delay-1">
+    <input type="hidden" name="access_code" id="access-code-hidden"/>
+    <p style="font-size:12px;font-weight:700;color:var(--muted);text-align:center;letter-spacing:1px;margin-bottom:16px;">الكود السري (6 أرقام)</p>
+    <div style="display:flex;justify-content:center;gap:10px;margin-bottom:24px;">
+      {% for i in range(6) %}
+      <input type="tel" id="otp-{{ i }}" maxlength="1" inputmode="numeric" pattern="[0-9]"
+             autocomplete="{{ 'one-time-code' if i == 0 else 'off' }}"
+             style="width:48px;height:58px;border:1.5px solid var(--border2);border-radius:14px;background:var(--card2);color:var(--text);font-size:26px;font-weight:900;text-align:center;font-family:'Tajawal',monospace;outline:none;transition:all 0.2s;"
+             onfocus="this.style.borderColor='var(--green)';this.style.boxShadow='0 0 0 3px rgba(34,197,94,0.15)'"
+             onblur="this.style.borderColor='var(--border2)';this.style.boxShadow='none'"
+             oninput="handleInput(this, {{ i }})"
+             onkeydown="handleKey(event, {{ i }})"
+             onpaste="handlePaste(event)"/>
+      {% endfor %}
+    </div>
+    <button type="submit" class="btn-primary" id="otp-btn" disabled style="font-size:15px;padding:14px;opacity:0.5;cursor:not-allowed;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      دخول للوحتي
+    </button>
+  </form>
+
+  <!-- WHATSAPP HELP -->
+  {% if coach.whatsapp_number %}
+  <a href="https://wa.me/{{ coach.whatsapp_number }}?text=السلام عليكم! محتاج الكود ديالي للمنصة"
+     target="_blank"
+     style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;width:100%;font-size:13px;color:var(--text2);text-decoration:none;font-weight:700;" class="fade-up delay-2">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    اطلب الكود من مدربك على واتساب
+  </a>
+  {% endif %}
+
+  <a href="/" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:16px;color:var(--muted);font-size:13px;text-decoration:none;font-weight:600;" class="fade-up delay-2">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+    رجوع للرئيسية
+  </a>
+</div>
+
+<script>
+const digits = new Array(6).fill('');
+function updateHidden() {
+  const code = digits.join('');
+  document.getElementById('access-code-hidden').value = code;
+  const btn = document.getElementById('otp-btn');
+  const full = code.length === 6 && /^\d{6}$/.test(code);
+  btn.disabled = !full; btn.style.opacity = full ? '1' : '0.5'; btn.style.cursor = full ? 'pointer' : 'not-allowed';
+}
+function handleInput(el, idx) {
+  const val = el.value.replace(/\D/g, '');
+  el.value = val ? val[val.length - 1] : '';
+  digits[idx] = el.value;
+  updateHidden();
+  if (el.value && idx < 5) document.getElementById('otp-' + (idx + 1)).focus();
+  if (digits.join('').length === 6 && /^\d{6}$/.test(digits.join(''))) setTimeout(() => document.getElementById('otp-form').submit(), 300);
+}
+function handleKey(e, idx) {
+  if (e.key === 'Backspace') {
+    if (!digits[idx] && idx > 0) { digits[idx-1] = ''; const p = document.getElementById('otp-'+(idx-1)); p.value=''; p.focus(); }
+    else digits[idx] = '';
+    updateHidden();
+  }
+}
+function handlePaste(e) {
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+  for (let i = 0; i < 6; i++) { digits[i] = text[i] || ''; document.getElementById('otp-'+i).value = digits[i]; }
+  updateHidden();
+  const nxt = digits.findIndex(d => !d); document.getElementById('otp-'+(nxt>=0?nxt:5)).focus();
+}
+document.getElementById('otp-0').focus();
+</script>
+{% endblock %}

@@ -1,0 +1,270 @@
+{% extends "base_doc.html" %}
+{% block title %}دليل المدرب — CoachPage DZ{% endblock %}
+{% block badge_class %}badge-coach{% endblock %}
+{% block badge_label %}دليل المدرب{% endblock %}
+{% block content %}
+
+<div class="doc-hero">
+  <div style="display:inline-flex;align-items:center;gap:8px;background:#f0fdf4;border:1px solid #86efac;border-radius:999px;padding:5px 14px;margin-bottom:14px;">
+    <div style="width:8px;height:8px;background:#22c55e;border-radius:50%;"></div>
+    <span style="font-size:12px;font-weight:700;color:#16a34a;">للمدربين فقط</span>
+  </div>
+  <h1>مرحباً في <span style="color:#22c55e;">CoachPage DZ</span></h1>
+  <p style="margin-top:10px;">دليلك الكامل لتشتغل بالمنصة — من إعداد حسابك لأول عميل تضيفه وأول كود ترسله.</p>
+</div>
+
+<!-- ═══ PENDING NOTE ═══ -->
+<div class="doc-section">
+  <div class="doc-card-warn" style="display:flex;gap:12px;align-items:flex-start;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <div>
+      <div style="font-size:14px;font-weight:700;color:#92400e;margin-bottom:4px;">حسابك قيد المراجعة</div>
+      <div style="font-size:13px;color:#b45309;line-height:1.6;">لحين ما المشرف يفعّل حسابك، تقدر تدخل للوحة تحكمك وتستعدّ — لكن صفحتك العامة ما تظهرش للعملاء بعد.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FIRST STEPS ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">الخطوات الأولى</span>
+  <div class="doc-card">
+    <div class="step-row">
+      <div class="step-num step-num-black">1</div>
+      <div>
+        <div class="step-title">ادفع الاشتراك وابعث الوصل</div>
+        <div class="step-desc">أرسل الاشتراك الشهري لـCCP المنصة عبر BaridiMob ثم ابعث صورة الوصل للمشرف على واتساب. ما تعداش 24 ساعة حتى تتفعّل.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num step-num-green">2</div>
+      <div>
+        <div class="step-title">أكمل ملفك الشخصي</div>
+        <div class="step-desc">من الترس (إعدادات): الاسم، التخصص، البايو، رقم CCP، واتساب، وسعر الاشتراك. التخصص يظهر كبادج أخضر تحت اسمك في صفحة المدربين بدل @username.</div>
+      </div>
+    </div>
+    <div class="step-row" style="border-bottom:none;">
+      <div class="step-num step-num-green">3</div>
+      <div>
+        <div class="step-title">انتظر التفعيل من المشرف</div>
+        <div class="step-desc">بعد التفعيل صفحتك تظهر في الهوم بيج. تقدر تدخل لوحتك في أي وقت من رابط /login المركزي أو من /coach/اسمك/login.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CENTRAL LOGIN ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">الدخول لحسابك — طريقتين</span>
+  <div class="doc-card">
+    <div class="step-row">
+      <div style="width:34px;height:34px;background:#f0fdf4;border:1px solid #86efac;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div>
+        <div class="step-title" style="color:#16a34a;">الطريقة السهلة — الدخول المركزي</div>
+        <div class="step-desc">روح على <code class="green">/login</code> — أدخل اسم المستخدم + كلمة السر. ما محتاجش تحفظ URL طويل.</div>
+      </div>
+    </div>
+    <div class="step-row" style="border-bottom:none;">
+      <div style="width:34px;height:34px;background:#f7f7f5;border:1px solid #e5e5e5;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      </div>
+      <div>
+        <div class="step-title">الطريقة المباشرة</div>
+        <div class="step-desc">روح مباشرة على <code>/coach/<strong>اسمك</strong>/login</code> — نفس الصفحة لكن مباشرة لحسابك.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ REFERRAL LINKS ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">رابط الانضمام الخاص بك</span>
+  <div class="doc-card">
+    <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:12px 14px;margin-bottom:12px;">
+      <div style="font-size:12px;font-weight:700;color:#16a34a;margin-bottom:4px;">رابطك الشخصي:</div>
+      <code style="font-size:13px;color:#166534;direction:ltr;display:block;">coachpagedz.com/join/<strong>اسمك</strong></code>
+    </div>
+    <div class="step-row">
+      <div class="step-num step-num-black">1</div>
+      <div>
+        <div class="step-title">ابعث الرابط للعميل الجديد</div>
+        <div class="step-desc">من لوحة تحكمك، في بانر "رابط الانضمام" اضغط "نسخ" — الرابط يُنسخ مباشرة. ابعثه على واتساب أو أي وسيلة.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num step-num-green">2</div>
+      <div>
+        <div class="step-title">العميل يفتح الرابط ويشوف صفحتك</div>
+        <div class="step-desc">يظهر له اسمك، تخصصك، بايوك، والسعر — إذا وافق يدخل كوده مباشرة من نفس الصفحة.</div>
+      </div>
+    </div>
+    <div class="step-row" style="border-bottom:none;">
+      <div class="step-num step-num-green">3</div>
+      <div>
+        <div class="step-title">العميل يدخل لوحته مباشرة</div>
+        <div class="step-desc">بعد إدخال الكود يوصل للوحته في ثواني — ما محتاجش يعرف رابط آخر.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ YOUR URLS ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">روابطك الشخصية</span>
+  <div class="doc-card">
+    <div class="url-row">
+      <span style="font-size:13px;color:#444;">دخول مركزي (الأسهل)</span>
+      <code class="green">/login</code>
+    </div>
+    <div class="url-row">
+      <span style="font-size:13px;color:#444;">صفحتك العامة (للعملاء)</span>
+      <code class="green">/coach/<strong>اسمك</strong></code>
+    </div>
+    <div class="url-row">
+      <span style="font-size:13px;color:#444;">رابط الانضمام (ابعثه للعملاء)</span>
+      <code class="green">/join/<strong>اسمك</strong></code>
+    </div>
+    <div class="url-row">
+      <span style="font-size:13px;color:#444;">لوحة التحكم</span>
+      <code>/coach/<strong>اسمك</strong>/dashboard</code>
+    </div>
+    <div class="url-row" style="border-bottom:none;">
+      <span style="font-size:13px;color:#444;">الإعدادات (ملف + كلمة سر + تخصص)</span>
+      <code>/coach/<strong>اسمك</strong>/settings</code>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ WHATSAPP BUTTON ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">إرسال الكود بنقرة واحدة</span>
+  <div class="doc-card">
+    <div class="step-row" style="border-bottom:none;">
+      <div style="width:34px;height:34px;background:#dcfce7;border:1px solid #86efac;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <div>
+        <div class="step-title">زر "ابعث الكود" في كل عميل</div>
+        <div class="step-desc">في لوحة تحكمك، كل عميل عنده زر أخضر "ابعث الكود" — يفتح واتساب مباشرة برسالة جاهزة فيها اسم العميل + الكود + رابط الدخول.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FILTERS ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">الفلاتر والبحث</span>
+  <div class="doc-card">
+    <div class="step-row">
+      <div class="step-num step-num-black">1</div>
+      <div>
+        <div class="step-title">فلاتر لوحة التحكم (عملاؤك)</div>
+        <div class="step-desc">من لوحتك تقدر تفلتر العملاء حسب: الكل / تنشيف / تضخيم / نشطون / سجّلوا اليوم / لم يسجّلوا اليوم. + بحث بالاسم.</div>
+      </div>
+    </div>
+    <div class="step-row" style="border-bottom:none;">
+      <div class="step-num step-num-green">2</div>
+      <div>
+        <div class="step-title">فلاتر الهوم بيج (المدربون)</div>
+        <div class="step-desc">الزوار يقدرون يفلترون المدربين حسب: الكل / تنشيف / تضخيم / أقل من 5000 دج / +5000 دج. + بحث بالاسم.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TRIAL SYSTEM ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">نظام التجربة المجانية</span>
+  <div class="doc-card">
+    <div class="step-row">
+      <div style="width:34px;height:34px;background:#f0fdf4;border:1px solid #86efac;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div>
+        <div class="step-title" style="color:#16a34a;">7 أيام مجانية عند التسجيل</div>
+        <div class="step-desc">تجرّب كل المزايا بدون دفع — بعد 7 أيام تحتاج تجدّد الاشتراك مع المشرف.</div>
+      </div>
+    </div>
+    <div class="step-row" style="border-bottom:none;">
+      <div style="width:34px;height:34px;background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div>
+        <div class="step-title" style="color:#b45309;">تحذير 2 أيام قبل الانتهاء</div>
+        <div class="step-desc">بانر برتقالي يظهر في لوحتك — تواصل مع المشرف لتجديد الاشتراك قبل الانقطاع.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PASSWORD CHANGE ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">تغيير كلمة السر</span>
+  <div class="doc-card">
+    <div class="step-row" style="border-bottom:none;">
+      <div class="step-num step-num-black">1</div>
+      <div>
+        <div class="step-title">من الإعدادات ← قسم "تغيير كلمة السر"</div>
+        <div class="step-desc">أدخل كلمة السر الحالية، ثم الجديدة (6 أحرف على الأقل)، ثم أكّدها. استخدم أيقونة العين لإظهار/إخفاء كل حقل.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ALL FEATURES ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">كل المزايا المتاحة</span>
+  <div class="doc-grid2">
+    {% for icon_d, title, desc in [
+      ("M9 11l3 3L22 4", "حساب ماكروز تلقائي", "BMR/TDEE بمعادلة Mifflin-St Jeor"),
+      ("M10 13a5 5 0 0 0 7.54.54l3-3", "رابط انضمام شخصي", "كل مدرب رابط /join خاص به"),
+      ("M21 15a2 2 0 0 1-2 2H7l-4 4V5", "واتساب بنقرة واحدة", "رسالة جاهزة بكود العميل"),
+      ("M3 3h18v18H3zM3 9h18M9 21V9", "هيتماب 90 يوم", "خريطة الالتزام اليومي"),
+      ("M22 16.92v3a2 2 0 0 1-2.18 2", "مخطط تطور الوزن", "منحنى أسبوعي بالفرق الكلي"),
+      ("M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z", "متابعة الماء اليومي", "شريط تقدم نحو 2 لتر"),
+      ("M8 6h13M8 12h13M8 18h13", "قائمة تسوق أسبوعية", "تتولد تلقائياً حسب الوصفات"),
+      ("M12 2a7 7 0 1 1 0 14", "وصفات ذكاء اصطناعي", "بمكونات جزائرية بالدارجة"),
+    ] %}
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8"><path d="{{ icon_d }}"/></svg>
+      </div>
+      <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:2px;">{{ title }}</div>
+      <div style="font-size:11px;color:#888;">{{ desc }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ═══ FAQ ═══ -->
+<div class="doc-section">
+  <span class="doc-section-title">أسئلة شائعة</span>
+  <div class="doc-card">
+    {% for q, a in [
+      ("كيف أبعث الكود بسرعة؟", "في لوحة تحكمك، كل عميل عنده زر أخضر 'ابعث الكود' يفتح واتساب برسالة جاهزة. أو زر 'نسخ' لنسخ الكود فقط."),
+      ("كيف أدعو عميل جديد؟", "من لوحتك، انسخ 'رابط الانضمام' — ابعثه للعميل الجديد. يشوف صفحتك ويدخل كوده من نفس الرابط."),
+      ("ما الفرق بين /login و /coach/اسمك/login؟", "نفس النتيجة. /login أسهل لأنك تدخل اسم المستخدم + السر. /coach/اسمك/login مباشر لحسابك بدون إدخال الاسم."),
+      ("كيف أخفي @username في صفحة المدربين؟", "من الإعدادات ← حقل 'التخصص' — اكتب مثلاً 'متخصص التنشيف والتضخيم'. يظهر كبادج أخضر تحت اسمك بدل @username."),
+      ("عميلي نسى الكود؟", "ادخل لصفحة العميل في لوحتك ← اضغط 'تجديد الكود' ← ابعث الكود الجديد بزر واتساب مباشرة."),
+      ("كيف أغيّر كلمة سري؟", "من الإعدادات ← قسم 'تغيير كلمة السر' ← أدخل الحالية والجديدة ← أيقونة العين لإظهار/إخفاء."),
+    ] %}
+    <div style="padding:12px 0;{% if not loop.last %}border-bottom:1px solid #f0f0f0;{% endif %}">
+      <div style="font-size:13px;font-weight:700;color:#111;margin-bottom:4px;display:flex;align-items:flex-start;gap:8px;">
+        <span style="color:#22c55e;font-size:16px;line-height:1;">?</span>
+        <span>{{ q }}</span>
+      </div>
+      <div style="font-size:13px;color:#555;line-height:1.6;padding-right:24px;">{{ a }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ═══ CTA ═══ -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+  <a href="/login" class="doc-btn doc-btn-green" style="color:#fff;">دخول المدربين ←</a>
+  <a href="/coach/{{ coach_username }}/settings" class="doc-btn doc-btn-black" style="color:#fff;">الإعدادات</a>
+</div>
+<a href="/" class="doc-btn doc-btn-outline" style="color:#666;">الصفحة الرئيسية</a>
+
+{% endblock %}
